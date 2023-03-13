@@ -40,7 +40,7 @@ def CalcAngleAlongCircle(state, center):
     {center}    3x1 matrix for orbit center coordinates
 
     Returns:
-    {d} Vehicle distance from orbit center
+    {phi_orbit} Angle along the orbit circle
     """
     phi_orbit = math.atan2(
         state.pe - center[1][0],
@@ -54,3 +54,36 @@ def CalcAngleAlongCircle(state, center):
         phi_orbit -= 2*math.pi
 
     return phi_orbit
+
+def CalcCommandedHeight(center):
+    """
+    Calculates the commanded height based on the orbit center's height.
+
+    Parameters:
+    {center}    3x1 matrix for orbit center coordinates
+
+    Returns:
+    {h_c}   Commanded height
+    """
+    return -center[2][0]
+
+def CalcCommandedCourse(state, center, dir, rho, k_orbit):
+    """
+    Calculates the commanded course based on the orbit center's
+    height, vehicle state, orbit direction, orbit circle radius, and
+    transition gain.
+
+    Parameters:
+    {state}     Vehicle State
+    {center}    3x1 matrix for orbit center coordinates
+    {dir}       Orbit direction
+    {rho}       Desired distance from orbit center
+    {k_orbit}   Transition gain
+
+    Returns:
+    {chi_c} Commanded course
+    """
+    chi_orbit = CalcAngleAlongCircle(state, center)
+    d = CalcDistFromCenter(state, center)
+    chi_c = chi_orbit + dir * ((math.pi/2) + math.atan(k_orbit * (d - rho) / rho))
+    return chi_c
