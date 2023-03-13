@@ -9,13 +9,28 @@ import math
 import ece163.Containers.States as States
 
 
-def CalcPathCourseAngle(q):
+def CalcPathCourseAngle(q: 'list[list[float]]'):
+    """
+    Calculate the unit vector normal to the q-k^i plane.
+    @param: q -> path direction of the unit vector k^i
+    """
     return math.atan2(q[0][0], q[1][0])
 
-def CalcR_Inertial2Path(chi):
+def CalcR_Inertial2Path(chi: float):
+    """
+    Calculate the rotation matrix from inertial to path
+    @param: chi -> path course angle
+    """
     return [[math.cos(chi), math.sin(chi), 0], [-math.sin(chi), math.cos(chi), 0], [0,0,1]]
 
-def CalcRelativePathError(state: States.vehicleState, origin, R):
+def CalcRelativePathError(state: States.vehicleState, origin:'list[list[float]]' , R: 'list[list[float]]'):
+    """
+    Calculate the unit vector normal to the q-k^i plane.
+    @param: state -> current 
+    @param: origin -> path direction of the unit vector k^i
+    @param: q -> path direction of the unit vector k^i
+
+    """
     position = [[state.pn], [state.pe], [state.pd]]
     return mm.multiply(R, mm.subtract(position, origin))
 

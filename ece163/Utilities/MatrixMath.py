@@ -164,7 +164,11 @@ def matrixPrint(A):
         print('\t'.join(['{: 7.3f}'.format(a) for a in A_row]))
     return
 
-
+def mag(vec):
+    """
+    Unpacks a 3x1 vector and returns the magnitude
+    """
+    return math.hypot(vec[0][0], vec[1][0], vec[2][0])
 
 
 # Test Harness -- test the code with known good examples
