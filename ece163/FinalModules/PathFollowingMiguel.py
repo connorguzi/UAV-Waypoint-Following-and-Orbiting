@@ -23,7 +23,8 @@ def CalcProjectedRelativeErrorVector(state, origin, R, n:list[list[float]], r:li
     """
     @param: state -> vehicle state
     @param: origin -> vector representing path origin
-    @param: R ->
+    @param: R -> rotation matrix from inertial to path frame
+    @param: n -> unit normal vector
     """
 
     ep = CalcRelativePathError()
