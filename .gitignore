@@ -1,0 +1,9 @@
+# git ignore for allt he pycache files
+ece163/Controls/__pycache__/
+ece163/Display/__pycache__/
+ece163/Modeling/__pycache__/
+ece163/Sensors/__pycache__/
+ece163/Simulation/__pycache__/
+ece163/Utilities/__pycache__/
+ece163/Constants/__pycache__/
+ece163/Containers/__pycache__/
