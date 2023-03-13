@@ -31,13 +31,17 @@ def CalcProjectedRelativeErrorVector(state:States.vehicleState, origin, R, n:'li
 
     # relative error vector in the inertial frame
     epi = [[state.pn - r[0][0]], [state.pe - r[1][0]], [state.pd - r[2][0]]]
-    epi_n_dotProduct = mm.dotProduct(epi, n) # e
+    epi_dot_n = mm.dotProduct(epi, n) # epi.n
+    epi_n = mm.multiply(epi_dot_n, n) # (epi.n)n
+    
+    si = mm.subtract(epi, epi_n) # epi - (epi.n)n
+    return si
 
-    # si = 
-    pass
-
-def CalcCommandedHeight():
+def CalcCommandedHeight(s, r, q):
     """
     Calculate
     """
-    pass
+    
+    hd = -r[2][0] + math.hypot(s[0][0], s[1][0]) * (q[2][0] / math.hypot(q[0][0], q[1][0]))
+
+    return hd
