@@ -103,9 +103,24 @@ class Chapter6(baseInterface.baseInterface):
 
 		self.showMaximized()
 
+		### Simulation Update Code ###
+		# Updates the simulation when tab is being changed
+		self.outPutTabs.currentChanged.connect(self.newTabClicked)
+		# Default the simulation to be set to homepage
+		self.outPutTabs.setCurrentIndex(0)
+		# Default for all graphs to be turned off
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		# Start QTimer for updating
+		self.simulationTimedThread.timeout.connect(self.UpdateSimulationPlots)
+
+		# Ensuring that only plot widgets get disabled
+		self.plotWidgets = [self.sensorsPlotGrid, self.controlResponseGrid, self.stateGrid]
+
 		return
 
 	def updateStatePlots(self, newState):
+		self.updatePlotsOff()
 		stateList = list()
 		for key in stateNamesofInterest:
 			newVal = getattr(newState, key)
@@ -115,6 +130,7 @@ class Chapter6(baseInterface.baseInterface):
 		stateList.append([newState.Va, math.hypot(newState.u, newState.v, newState.w)])
 
 		self.stateGrid.addNewAllData(stateList, [self.simulateInstance.time]*(len(stateNamesofInterest) + 1))
+		self.updatePlotsOn()
 		return
 
 	def getVehicleState(self):
@@ -127,12 +143,15 @@ class Chapter6(baseInterface.baseInterface):
 		return
 
 	def resetSimulationActions(self):
+
 		self.simulateInstance.reset()
 		self.stateGrid.clearDataPointsAll()
 		self.vehicleInstance.reset(self.simulateInstance.underlyingModel.getVehicleState())
 		self.updateNumericStateBox(self.simulateInstance.underlyingModel.getVehicleState())
 		self.vehicleInstance.removeAllAribtraryLines()
 		self.controlResponseGrid.clearDataPointsAll()
+		self.sensorsPlotGrid.clearDataPointsAll()
+		self.outPutTabs.setCurrentIndex(0)
 
 	def trimCalcComplete(self, **kwargs):
 		"""
@@ -154,6 +173,7 @@ class Chapter6(baseInterface.baseInterface):
 		# controlplotElements.extend([['Trim', 'Actual'] for x in trimPlotNames])
 		# ControlPlotNames.extend(trimPlotNames)
 		# self.stateGrid.addNewAllData(stateList, [self.simulateInstance.time] * (len(stateNamesofInterest) + 1))
+		self.updatePlotsOff()
 		inputToGrid = list()
 
 		Commanded = self.referenceControl.currentReference
@@ -171,11 +191,12 @@ class Chapter6(baseInterface.baseInterface):
 		inputToGrid.append([math.degrees(x) for x in [trimSettings.Rudder, ActualControl.Rudder]])  # Throttle
 		# print(inputToGrid)
 		self.controlResponseGrid.addNewAllData(inputToGrid, [self.simulateInstance.time]*len(inputToGrid))
-
+		self.updatePlotsOn()
 
 		return
 
 	def updateSensorPlots(self):
+		self.updatePlotsOff()
 		inputToGrid = list()
 		noisySensors = self.simulateInstance.sensorModel.getSensorsNoisy()
 		trueSensors = self.simulateInstance.sensorModel.getSensorsTrue()
@@ -202,7 +223,60 @@ class Chapter6(baseInterface.baseInterface):
 
 
 		self.sensorsPlotGrid.addNewAllData(inputToGrid, [self.simulateInstance.time]*len(inputToGrid))
+		self.updatePlotsOn()
 		return
+
+	###########################
+	# Turns all simulation plots for a single instance (only if the widget is a plot widget)
+	def UpdateSimulationPlots(self):
+		currentWidget = self.outPutTabs.currentWidget()
+		# Ensure that that the timer is only enabled for states, sensors, and control response widgets
+		if (currentWidget in self.plotWidgets):
+			# self.runUpdate()
+			# self.runUpdate()
+			self.updatePlotsOff()
+			
+			# self.updatePlotsOn()
+			# self.updatePlotsOff()
+		return
+
+	# Updates a simulation widget when new tab clicked
+	def newTabClicked(self):
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		return
+
+	# toggles the sensor plot widget
+	def toggleSensorsPlot(self, toggleIn):
+		self.sensorsPlotGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# toggles the control response widget
+	def togglecontrolResponsePlot(self, toggleIn):
+		self.controlResponseGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# toggles the state grid widget
+	def togglestateGridPlot(self, toggleIn):
+		self.stateGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# Turns on all simulation plots
+	def updatePlotsOn(self):
+		# print("Turning on plot update")
+		self.toggleSensorsPlot(True)
+		self.togglecontrolResponsePlot(True)
+		self.togglestateGridPlot(True)
+		return
+
+	# Turns off all simulation plots
+	def updatePlotsOff(self):
+		# print("Turning off plot update")
+		self.toggleSensorsPlot(False)
+		self.togglecontrolResponsePlot(False)
+		self.togglestateGridPlot(False)
+		return
+#######################
 
 sys._excepthook = sys.excepthook
 

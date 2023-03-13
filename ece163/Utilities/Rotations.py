@@ -58,6 +58,5 @@ def ned2enu(points):
     newpoints = []
     for vec in points:
         transposed = [[p] for p in vec]
-        print(transposed)
         newpoints.append(mm.transpose(mm.multiply(R, transposed))[0])
     return newpoints
