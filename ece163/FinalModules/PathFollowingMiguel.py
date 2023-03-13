@@ -4,6 +4,7 @@ Date: 03.13.2022
 """
 
 from ece163.Utilities import MatrixMath as mm
+from FinalModules.PathFollowingConnor import CalcRelativePathError
 import math
 
 def CalcUnitNormalVector(q:list[list[float]]):
@@ -18,8 +19,15 @@ def CalcUnitNormalVector(q:list[list[float]]):
 
     return mm.scalarMultiply(1.0/mag, cross)
 
-def CalcProjectedRelativeErrorVector(n:list[list[float]], r:list[list[float]]):
-    
+def CalcProjectedRelativeErrorVector(state, origin, R, n:list[list[float]], r:list[list[float]]):
+    """
+    @param: state -> vehicle state
+    @param: origin -> vector representing path origin
+    @param: R ->
+    """
+
+    ep = CalcRelativePathError()
+
     pass
 
 def CalcCommandedHeight():
