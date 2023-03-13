@@ -8,7 +8,6 @@ of the UAV, the center location of the waypoint it is currently
 orbiting, and the distance from the center of the way point. 
 '''
 
-from copy import deepcopy
 import math
 from . import MatrixMath
 
