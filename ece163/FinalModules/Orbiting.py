@@ -86,3 +86,24 @@ def CalcCommandedCourse(state, center, dir, rho, k_orbit):
     d = CalcDistFromCenter(state, center)
     chi_c = chi_orbit + dir * ((math.pi/2) + math.atan(k_orbit * (d - rho) / rho))
     return chi_c
+
+def getCommandedInputs(state, center, dir, rho, k_orbit):
+    """
+    Calculates the commanded course and commanded height based on the
+    orbit center's height, vehicle state, orbit direction, orbit
+    circle radius, and transition gain.
+
+    Parameters:
+    {state}     Vehicle State
+    {center}    3x1 matrix for orbit center coordinates
+    {dir}       Orbit direction
+    {rho}       Desired distance from orbit center
+    {k_orbit}   Transition gain
+
+    Returns:
+    {h_c}   Commanded height
+    {chi_c} Commanded course
+    """
+    h_c = CalcCommandedHeight(center)
+    chi_c = CalcCommandedCourse(state, center, dir, rho, k_orbit)
+    return h_c, chi_c
