@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\pyqtgraph\__init__.py", line 299, in cleanup
+    def cleanup():
+KeyboardInterrupt
