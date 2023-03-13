@@ -1,6 +1,17 @@
 import ece163.Utilities.MatrixMath as mm
 import math
 import ece163.Containers.States as States
+import enum
+
+class WaypointStates(enum.Enum):
+	"""
+	class WaypointStates(enum.Enum):
+	Enumeration class for the waypoint following/orbiting state machine. Defines three states that we will be using to reset the PI integrators
+	when switching between different states.
+	"""
+	TRANSITIONING = enum.auto()
+	PATH_FOLLOWING = enum.auto()
+	ORBITING = enum.auto()
 
 def CalcDirectionVector(state: States.vehicleState, waypoint):
     """
