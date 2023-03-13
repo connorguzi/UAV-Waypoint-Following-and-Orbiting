@@ -9,7 +9,6 @@ orbiting, and the distance from the center of the way point.
 '''
 
 import math
-from . import MatrixMath
 
 def CalcDistFromCenter(state, center):
     """
