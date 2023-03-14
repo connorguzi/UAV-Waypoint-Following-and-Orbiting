@@ -88,7 +88,11 @@ def CalcCommandedHeight(s, r, q):
     """
     Author: Miguel Tamayo
     Date: 03.13.2023
-    Calculate
+    Calculate commanded height
+
+    @param: s -> projection of error vector
+    @param: r -> vector form origin to path
+    @param: q -> unit vector with path direction
     """
     
     hd = -r[2][0] + math.hypot(s[0][0], s[1][0]) * (q[2][0] / math.hypot(q[0][0], q[1][0]))
@@ -100,7 +104,13 @@ def getCommandedInputs(s:'list[list[float]]', r:'list[list[float]]', q: 'list[li
     """
     wrapper function to return the commanded course and commanded height
     for path following and orbiting
-
+    @param: s -> projection of error vector ep
+    @param: r -> vector from origin to path
+    @param: q -> path direction of the unit vector k^i
+    @param: origin -> position of origin point that the line to waypoint is.
+    @param: chi_inf -> gain that indicates what angle the UAV will approach waypoint from afar
+    @param: k_path -> gain that indicates how soon the UAV starts turning
+    @param: state -> current state of the UAV
     """
     commandedHeight = CalcCommandedHeight(s=s, r=r, q=q)
     commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_kapth=k_path, state=state)

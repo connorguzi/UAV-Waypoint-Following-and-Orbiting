@@ -5,8 +5,12 @@ Date: 03.13.2023
 Waypoint module used to keep attributes of waypoints that
 will be visited by the UAV
 """
-import ece163.Containers.States as States
+import sys
 import math
+
+sys.path.append("./")  # python is horrible, no?
+sys.path.append("..")  # python is horrible, no?
+import ece163.Containers.States as States
 
 class WayPoint():
     def __init__(self, n:float=0.0, e:float=0.0, d:float=0.0, radius:float=10.0, direction:float=1, time:float=1.0) -> None:
