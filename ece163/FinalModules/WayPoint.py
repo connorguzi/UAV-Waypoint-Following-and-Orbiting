@@ -16,6 +16,21 @@ class WayPoint():
         @param: time -> time to circle around the point for
         """
 
-        self.pos = [[n], [e], [d]] # lcoation of the waypoint as NED coordinates
+        self.location = [[n], [e], [d]] # lcoation of the waypoint as NED coordinates
         self.time = time # time to orbit around the waypoint
         pass
+
+    def getPointTime(self):
+        """
+        Return the time to orbit around the point
+        @return: time
+        """
+
+        return self.time
+    
+    def getPointLocation(self):
+        """
+        Return the location of the waypoint
+        @return: location -> 3x1 array
+        """
+        return self.location
