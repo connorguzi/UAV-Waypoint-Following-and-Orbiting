@@ -9,12 +9,13 @@ import ece163.Containers.States as States
 import math
 
 class WayPoint():
-    def __init__(self, n:float=0.0, e:float=0.0, d:float=0.0, radius:float=10.0, time:float=1.0) -> None:
+    def __init__(self, n:float=0.0, e:float=0.0, d:float=0.0, radius:float=10.0, direction:float=1, time:float=1.0) -> None:
         """
         WayPoint module with NED location
         @param: n -> North point
         @param: e -> East point
         @param: d -> Down point (altitude)
+        @param: direction -> direction of orbit (1 CW, -1 CCW)
         @param: time -> time to circle around the point for
         """
 
@@ -22,6 +23,7 @@ class WayPoint():
         self.time = time # time to orbit around the waypoint
         self.radius = radius # desired distance from the waypoint center
         self.distance = 0.0 # holder for the distance from UAV to waypoint
+        self.direction = 1 # direction of orbit (1 CW, -1 CCW)
         pass
 
     def getPointTime(self):
