@@ -24,7 +24,7 @@ def CalcR_Inertial2Path(chi: float):
     Calculate the rotation matrix from inertial to path
     @param: chi -> path course angle
     """
-    return [[math.cos(chi), math.sin(chi), 0], [-math.sin(chi), math.cos(chi), 0], [0,0,1]]
+    return [[math.cos(chi), math.sin(chi), 0.0], [-math.sin(chi), math.cos(chi), 0.0], [0.0,0.0,1.0]]
 
 def CalcRelativePathError(state: States.vehicleState, origin:'list[list[float]]' , R: 'list[list[float]]'):
     """
@@ -54,7 +54,7 @@ def CalcCommandedCourse(q: 'list[list[float]]', origin: 'list[list[float]]', chi
     chi_q = CalcPathCourseAngle(q)
     R = CalcR_Inertial2Path(chi_q)
     e = CalcRelativePathError(state=state, origin=origin, R=R)
-    return chi_q - chi_inf * (2 / math.pi) * math.atan(k_path * e)
+    return chi_q - chi_inf * (2.0 / math.pi) * math.atan(k_path * e[1][0])
 
 def CalcUnitNormalVector(q:'list[list[float]]'):
     """
