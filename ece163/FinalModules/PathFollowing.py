@@ -43,9 +43,6 @@ def CalcCommandedCourse(q: 'list[list[float]]', origin: 'list[list[float]]', chi
     e = CalcRelativePathError(state=state, origin=origin, R=R)
     return chi_q - chi_inf * (2 / math.pi) * math.atan(k_path * e)
 
-
-
-
 def CalcUnitNormalVector(q:'list[list[float]]'):
     """
     Author: Miguel Tamayo (miatamay)
