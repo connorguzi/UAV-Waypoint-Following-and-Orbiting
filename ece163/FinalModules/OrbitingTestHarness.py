@@ -14,9 +14,9 @@ at which point it will execute various tests on the SensorsModel modules
 # %% Initialization of test harness and helpers:
 
 # autopep8: off
-from calendar import TextCalendar
 import sys
 import Orbiting
+import WayPoint
 
 sys.path.append("./")  # python is horrible, no?
 sys.path.append("..")  # python is horrible, no?
@@ -603,19 +603,19 @@ def testing_Orbiting_getCommandedInputs():
         pe=0,
         pd=0
     )
-    testCenter = [
-        [0],
-        [0],
-        [0]
-    ]
-    dir = 1
-    rho = 1
+    testWaypoint = WayPoint.WayPoint(
+        n = 0,
+        e = 0,
+        d = 0,
+        radius = 1,
+        direction = 1,
+    )
     k_orbit = 0
 
     ref_chi = math.pi/2
     ref_h = 0
     act_h, act_chi = Orbiting.getCommandedInputs(
-        testState, testCenter, dir, rho, k_orbit)
+        testState, testWaypoint, k_orbit)
 
     if not evaluateTest(cur_test, isclose(ref_chi, act_chi) and isclose(ref_h, act_h)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -631,19 +631,19 @@ def testing_Orbiting_getCommandedInputs():
         pe=2,
         pd=-100
     )
-    testCenter = [
-        [-3],
-        [-1],
-        [-200]
-    ]
-    dir = 1
-    rho = 10
+    testWaypoint = WayPoint.WayPoint(
+        n = -3,
+        e = -1,
+        d = -200,
+        radius = 10,
+        direction = 1,
+    )
     k_orbit = 2
 
     ref_chi = 1.4288992721907
     ref_h = 200
     act_h, act_chi = Orbiting.getCommandedInputs(
-        testState, testCenter, dir, rho, k_orbit)
+        testState, testWaypoint, k_orbit)
 
     if not evaluateTest(cur_test, isclose(ref_chi, act_chi) and isclose(ref_h, act_h)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -667,13 +667,13 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
         pd=-100,
         u=Va
     ))
-    center = [
-        [0],
-        [0],
-        [-100]
-    ]
-    dir = 1
-    rho = 100
+    testWaypoint = WayPoint.WayPoint(
+        n = 0,
+        e = 0,
+        d = -100,
+        radius = 100,
+        direction = 1,
+    )
     k_orbit = 1
 
     dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
@@ -696,7 +696,7 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
     for i in range(n_steps):        
         # Update reference commands
         h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
-            vclc.getVehicleState(), center, dir, rho, k_orbit)
+            vclc.getVehicleState(), testWaypoint, k_orbit)
         controls = Controls.referenceCommands(
             courseCommand=chi_c[i],
             altitudeCommand=h_c[i],
@@ -760,13 +760,13 @@ def testing_Orbiting_Graphical_InitInOrbit(gains, printPlots=False):
         pe=0,
         pd=-100
     ))
-    center = [
-        [0],
-        [0],
-        [-100]
-    ]
-    dir = 1
-    rho = 100
+    testWaypoint = WayPoint.WayPoint(
+        n = 0,
+        e = 0,
+        d = -100,
+        radius = 100,
+        direction = 1,
+    )
     k_orbit = 1
     Va = 20
 
@@ -790,7 +790,7 @@ def testing_Orbiting_Graphical_InitInOrbit(gains, printPlots=False):
     for i in range(n_steps):        
         # Update reference commands
         h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
-            vclc.getVehicleState(), center, dir, rho, k_orbit)
+            vclc.getVehicleState(), testWaypoint, k_orbit)
         controls = Controls.referenceCommands(
             courseCommand=chi_c[i],
             altitudeCommand=h_c[i],
@@ -854,13 +854,13 @@ def testing_Orbiting_Graphical_InitOutOrbit(gains, printPlots=False):
         pe=0,
         pd=-100
     ))
-    center = [
-        [0],
-        [0],
-        [-100]
-    ]
-    dir = 1
-    rho = 100
+    testWaypoint = WayPoint.WayPoint(
+        n = 0,
+        e = 0,
+        d = -100,
+        radius = 100,
+        direction = 1,
+    )
     k_orbit = 1
     Va = 20
 
@@ -884,7 +884,7 @@ def testing_Orbiting_Graphical_InitOutOrbit(gains, printPlots=False):
     for i in range(n_steps):        
         # Update reference commands
         h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
-            vclc.getVehicleState(), center, dir, rho, k_orbit)
+            vclc.getVehicleState(), testWaypoint, k_orbit)
         controls = Controls.referenceCommands(
             courseCommand=chi_c[i],
             altitudeCommand=h_c[i],
@@ -948,13 +948,13 @@ def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
         pe=0,
         pd=-100
     ))
-    center = [
-        [0],
-        [0],
-        [-100]
-    ]
-    dir = 1
-    rho = 100
+    testWaypoint = WayPoint.WayPoint(
+        n = 0,
+        e = 0,
+        d = -100,
+        radius = 100,
+        direction = 1,
+    )
     k_orbit = 1
     Va = 20
 
@@ -975,18 +975,19 @@ def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
     y = [0 for i in range(n_steps)]
     z = [0 for i in range(n_steps)]
 
-    for i in range(n_steps):  
+    for i in range(n_steps):
+        # Update orbit target  
         if i == breakStep:
-            center = [
-                [300],
-                [1000],
-                [-300]
-            ]
-            dir = -1
-            rho = 200
+            testWaypoint = WayPoint.WayPoint(
+                n = 300,
+                e = 1000,
+                d = -300,
+                radius = 200,
+                direction = -1,
+            )
         # Update reference commands
         h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
-            vclc.getVehicleState(), center, dir, rho, k_orbit)
+            vclc.getVehicleState(), testWaypoint, k_orbit)
         controls = Controls.referenceCommands(
             courseCommand=chi_c[i],
             altitudeCommand=h_c[i],
@@ -1043,12 +1044,12 @@ print(f"\n\nRunning {os.path.basename(__file__)}:")
 
 # %% Run Tests
 
-# Test GaussMarkov
-# testing_Orbiting_CalcDistFromCenter()
-# testing_Orbiting_CalcAngleAlongCircle()
-# testing_Orbiting_CalcCommandedHeight()
-# testing_Orbiting_CalcCommandedCourse()
-# testing_Orbiting_getCommandedInputs()
+# Test Orbiting
+testing_Orbiting_CalcDistFromCenter()
+testing_Orbiting_CalcAngleAlongCircle()
+testing_Orbiting_CalcCommandedHeight()
+testing_Orbiting_CalcCommandedCourse()
+testing_Orbiting_getCommandedInputs()
 
 # Get trim state
 vTrim = VehicleTrim.VehicleTrim()
