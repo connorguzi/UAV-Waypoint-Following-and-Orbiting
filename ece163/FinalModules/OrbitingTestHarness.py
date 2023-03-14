@@ -588,7 +588,64 @@ def testing_Orbiting_CalcCommandedCourse():
         print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
         print(f"{'': <{8}}{'|' : <2}{'chi' : <6}| {ref_chi : <18}| {act_chi : <18}")
 
-        
+
+def testing_Orbiting_getCommandedInputs():
+    print("\nBeginning testing of Orbiting.getCommandedInputs:")
+
+    # %%
+    cur_test = "Orbiting.getCommandedInputs Test 1: All 0"
+
+    testState = States.vehicleState(
+        pn=0,
+        pe=0,
+        pd=0
+    )
+    testCenter = [
+        [0],
+        [0],
+        [0]
+    ]
+    dir = 1
+    rho = 1
+    k_orbit = 0
+    
+    ref_chi = math.pi/2
+    ref_h = 0
+    act_h, act_chi = Orbiting.getCommandedInputs(testState, testCenter, dir, rho, k_orbit)
+
+    if not evaluateTest(cur_test, isclose(ref_chi, act_chi) and isclose(ref_h, act_h)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'h' : <6}| {ref_h : <18}| {act_h : <18}")
+        print(f"{'': <{8}}{'|' : <2}{'chi' : <6}| {ref_chi : <18}| {act_chi : <18}")
+    
+    # %%
+    cur_test = "Orbiting.getCommandedInputs Test 2: Basic Values"
+
+    testState = States.vehicleState(
+        pn=1,
+        pe=2,
+        pd=-100
+    )
+    testCenter = [
+        [-3],
+        [-1],
+        [-200]
+    ]
+    dir = 1
+    rho = 10
+    k_orbit = 2
+    
+    ref_chi = 1.4288992721907
+    ref_h = 200
+    act_h, act_chi = Orbiting.getCommandedInputs(testState, testCenter, dir, rho, k_orbit)
+
+    if not evaluateTest(cur_test, isclose(ref_chi, act_chi) and isclose(ref_h, act_h)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'h' : <6}| {ref_h : <18}| {act_h : <18}")
+        print(f"{'': <{8}}{'|' : <2}{'chi' : <6}| {ref_chi : <18}| {act_chi : <18}")
+
 
 
 # %% Start Message
@@ -601,6 +658,7 @@ testing_Orbiting_CalcDistFromCenter()
 testing_Orbiting_CalcAngleAlongCircle()
 testing_Orbiting_CalcCommandedHeight()
 testing_Orbiting_CalcCommandedCourse()
+testing_Orbiting_getCommandedInputs()
 
 # %% Print results:
 
