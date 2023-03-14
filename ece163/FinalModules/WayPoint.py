@@ -23,7 +23,7 @@ class WayPoint():
         self.time = time # time to orbit around the waypoint
         self.radius = radius # desired distance from the waypoint center
         self.distance = 0.0 # holder for the distance from UAV to waypoint
-        self.direction = 1 # direction of orbit (1 CW, -1 CCW)
+        self.direction = direction # direction of orbit (1 CW, -1 CCW)
         pass
 
     def getPointTime(self):
