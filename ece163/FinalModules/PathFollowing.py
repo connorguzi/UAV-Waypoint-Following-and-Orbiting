@@ -65,7 +65,7 @@ def CalcUnitNormalVector(q:'list[list[float]]'):
 
     return mm.scalarMultiply(1.0/mag, cross)
 
-def CalcProjectedRelativeErrorVector(state:States.vehicleState, origin, R, n:'list[list[float]]', r:'list[list[float]]'):
+def CalcProjectedRelativeErrorVector(state:States.vehicleState, n:'list[list[float]]', r:'list[list[float]]'):
     """
     Author: Miguel Tamayo (miatamay)
     Date: 03.13.2023
@@ -99,7 +99,7 @@ def CalcCommandedHeight(s, r, q):
 
     return hd
 
-def getCommandedInputs(s:'list[list[float]]', r:'list[list[float]]', q: 'list[list[float]]',
+def getCommandedInputs(r:'list[list[float]]', q: 'list[list[float]]',
                        origin: 'list[list[float]]', chi_inf:float, k_path:float, state:States.vehicleState):
     """
     wrapper function to return the commanded course and commanded height
@@ -112,6 +112,8 @@ def getCommandedInputs(s:'list[list[float]]', r:'list[list[float]]', q: 'list[li
     @param: k_path -> gain that indicates how soon the UAV starts turning
     @param: state -> current state of the UAV
     """
+    n = CalcUnitNormalVector(q=q)
+    s = CalcProjectedRelativeErrorVector(state=state,n=n,r=origin)
     commandedHeight = CalcCommandedHeight(s=s, r=r, q=q)
     commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_kapth=k_path, state=state)
 
