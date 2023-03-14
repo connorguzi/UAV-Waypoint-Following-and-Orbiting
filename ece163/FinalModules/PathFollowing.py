@@ -105,7 +105,7 @@ def CalcCommandedHeight(s, r, q):
     return hd
 
 def getCommandedInputs(r:'list[list[float]]', q: 'list[list[float]]',
-                       origin: 'list[list[float]]', chi_inf:float, k_path:float, state:States.vehicleState):
+                       chi_inf:float, k_path:float, state:States.vehicleState):
     """
     wrapper function to return the commanded course and commanded height
     for path following and orbiting
@@ -118,8 +118,8 @@ def getCommandedInputs(r:'list[list[float]]', q: 'list[list[float]]',
     @param: state -> current state of the UAV
     """
     n = CalcUnitNormalVector(q=q)
-    s = CalcProjectedRelativeErrorVector(state=state,n=n,r=origin)
+    s = CalcProjectedRelativeErrorVector(state=state,n=n,r=r)
     commandedHeight = CalcCommandedHeight(s=s, r=r, q=q)
-    commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_kapth=k_path, state=state)
+    commandedCourse = CalcCommandedCourse(q=q, origin=r, chi_inf=chi_inf, k_kapth=k_path, state=state)
 
     return commandedHeight, commandedCourse
