@@ -10,6 +10,7 @@ orbiting, and the distance from the center of the way point.
 
 import math
 
+
 def CalcDistFromCenter(state, center):
     """
     Calculates the UAV's distance from the center of the orbit which is
@@ -26,6 +27,7 @@ def CalcDistFromCenter(state, center):
     b = (state.pe - center[1][0])**2
     d = math.sqrt(a + b)
     return d
+
 
 def CalcAngleAlongCircle(state, center):
     """
@@ -53,6 +55,7 @@ def CalcAngleAlongCircle(state, center):
 
     return phi_orbit
 
+
 def CalcCommandedHeight(center):
     """
     Calculates the commanded height based on the orbit center's height.
@@ -64,6 +67,7 @@ def CalcCommandedHeight(center):
     {h_c}   Commanded height
     """
     return -center[2][0]
+
 
 def CalcCommandedCourse(state, center, dir, rho, k_orbit):
     """
@@ -83,10 +87,12 @@ def CalcCommandedCourse(state, center, dir, rho, k_orbit):
     """
     chi_orbit = CalcAngleAlongCircle(state, center)
     d = CalcDistFromCenter(state, center)
-    chi_c = chi_orbit + dir * ((math.pi/2) + math.atan(k_orbit * (d - rho) / rho))
+    chi_c = chi_orbit + dir * \
+        ((math.pi/2) + math.atan(k_orbit * (d - rho) / rho))
     return chi_c
 
-def getCommandedInputs(state, center, dir, rho, k_orbit):
+
+def getCommandedInputs(state, waypoint, k_orbit):
     """
     Calculates the commanded course and commanded height based on the
     orbit center's height, vehicle state, orbit direction, orbit
@@ -103,6 +109,7 @@ def getCommandedInputs(state, center, dir, rho, k_orbit):
     {h_c}   Commanded height
     {chi_c} Commanded course
     """
-    h_c = CalcCommandedHeight(center)
-    chi_c = CalcCommandedCourse(state, center, dir, rho, k_orbit)
+    h_c = CalcCommandedHeight(waypoint.location)
+    chi_c = CalcCommandedCourse(
+        state, waypoint.location, waypoint.direction, waypoint.radius, k_orbit)
     return h_c, chi_c
