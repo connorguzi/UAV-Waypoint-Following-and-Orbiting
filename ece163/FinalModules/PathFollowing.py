@@ -83,9 +83,9 @@ def CalcProjectedRelativeErrorVector(state:States.vehicleState, n:'list[list[flo
 
     # relative error vector in the inertial frame
     epi = [[state.pn - origin[0][0]], [state.pe - origin[1][0]], [state.pd - origin[2][0]]]
-    print("EPI: ", epi)
+    # print("EPI: ", epi)
     epi_dot_n = mm.dotProduct(epi, n)[0][0] # epi.n
-    print("EPI DOT: ", epi_dot_n)
+    # print("EPI DOT: ", epi_dot_n)
     epi_n = mm.scalarMultiply(epi_dot_n, n) # (epi.n)n
     
     si = mm.subtract(epi, epi_n) # epi - (epi.n)n
