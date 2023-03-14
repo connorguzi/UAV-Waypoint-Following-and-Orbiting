@@ -337,6 +337,72 @@ def testing_Orbiting_CalcDistFromCenter():
         print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<19}|{'' :-<19}")
         print(f"{'': <{8}}{'|' : <2}{'d' : <30}| {ref_d : <18}| {act_d : <18}")
 
+    # %%
+    cur_test = "Orbiting.CalcDistFromCenter Test 2: 0 state, moved center"
+
+    testState = States.vehicleState(
+        pn=0,
+        pe=0,
+        pd=0
+    )
+    testCenter = [
+        [3],
+        [4],
+        [5]
+    ]
+    
+    ref_d = 5
+    act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_d, act_d)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <30}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'d' : <30}| {ref_d : <18}| {act_d : <18}")
+    
+    # %%
+    cur_test = "Orbiting.CalcDistFromCenter Test 3: moved state, 0 center"
+
+    testState = States.vehicleState(
+        pn=3,
+        pe=4,
+        pd=5
+    )
+    testCenter = [
+        [0],
+        [0],
+        [0]
+    ]
+    
+    ref_d = 5
+    act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_d, act_d)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <30}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'d' : <30}| {ref_d : <18}| {act_d : <18}")
+
+    # %%
+    cur_test = "Orbiting.CalcDistFromCenter Test 4: moved state, moved center"
+
+    testState = States.vehicleState(
+        pn=-5,
+        pe=201,
+        pd=5
+    )
+    testCenter = [
+        [-8],
+        [197],
+        [-9.0]
+    ]
+    
+    ref_d = 5
+    act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_d, act_d)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <30}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'d' : <30}| {ref_d : <18}| {act_d : <18}")
+
 
 # %% Start Message
 print(f"\n\nRunning {os.path.basename(__file__)}:")
