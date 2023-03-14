@@ -66,11 +66,11 @@ def CalcUnitNormalVector(q:'list[list[float]]'):
 
     ki = [[0], [0], [1]] # vertical unit vector
     cross = mm.crossProduct(q, ki)
-    mag = math.hypot(ki[0][0], ki[1][0], ki[2][0])
+    mag = math.hypot(cross[0][0], cross[1][0], cross[2][0])
 
     return mm.scalarMultiply(1.0/mag, cross)
 
-def CalcProjectedRelativeErrorVector(state:States.vehicleState, n:'list[list[float]]', r:'list[list[float]]'):
+def CalcProjectedRelativeErrorVector(state:States.vehicleState, n:'list[list[float]]', origin:'list[list[float]]'):
     """
     Author: Miguel Tamayo (miatamay)
     Date: 03.13.2023
@@ -78,13 +78,15 @@ def CalcProjectedRelativeErrorVector(state:States.vehicleState, n:'list[list[flo
     @param: origin -> vector representing path origin
     @param: R -> rotation matrix from inertial to path frame
     @param: n -> unit normal vector
-    @param: r -> vector distance from origin of path
+    @param: origin -> vector distance from origin of path
     """
 
     # relative error vector in the inertial frame
-    epi = [[state.pn - r[0][0]], [state.pe - r[1][0]], [state.pd - r[2][0]]]
-    epi_dot_n = mm.dotProduct(epi, n) # epi.n
-    epi_n = mm.multiply(epi_dot_n, n) # (epi.n)n
+    epi = [[state.pn - origin[0][0]], [state.pe - origin[1][0]], [state.pd - origin[2][0]]]
+    print("EPI: ", epi)
+    epi_dot_n = mm.dotProduct(epi, n)[0][0] # epi.n
+    print("EPI DOT: ", epi_dot_n)
+    epi_n = mm.scalarMultiply(epi_dot_n, n) # (epi.n)n
     
     si = mm.subtract(epi, epi_n) # epi - (epi.n)n
     return si
