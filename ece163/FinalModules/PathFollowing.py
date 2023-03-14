@@ -1,3 +1,8 @@
+import sys
+sys.path.append("./")  # python is horrible, no?
+sys.path.append("..")  # python is horrible, no?
+sys.path.append("../..")
+
 import ece163.Utilities.MatrixMath as mm
 import math
 import ece163.Containers.States as States
@@ -86,7 +91,7 @@ def CalcProjectedRelativeErrorVector(state:States.vehicleState, origin, R, n:'li
 
 def CalcCommandedHeight(s, r, q):
     """
-    Author: Miguel Tamayo
+    Author: Miguel Tamayo (miatamay)
     Date: 03.13.2023
     Calculate commanded height
 
