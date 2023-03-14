@@ -5,6 +5,8 @@ import ece163.Containers.States as States
 
 def CalcPathCourseAngle(q: 'list[list[float]]'):
     """
+    Author: Connor Guzikowski (cguzikow)
+    Date: 03.13.2023
     Calculate the unit vector normal to the q-k^i plane.
     @param: q -> path direction of the unit vector k^i
     """
@@ -12,6 +14,8 @@ def CalcPathCourseAngle(q: 'list[list[float]]'):
 
 def CalcR_Inertial2Path(chi: float):
     """
+    Author: Connor Guzikowski (cguzikow)
+    Date: 03.13.2023    
     Calculate the rotation matrix from inertial to path
     @param: chi -> path course angle
     """
@@ -19,6 +23,8 @@ def CalcR_Inertial2Path(chi: float):
 
 def CalcRelativePathError(state: States.vehicleState, origin:'list[list[float]]' , R: 'list[list[float]]'):
     """
+    Author: Connor Guzikowski (cguzikow)
+    Date: 03.13.2023    
     Calculate the Relative Path Error
     @param: state -> current state of UAV
     @param: origin -> position of origin point that the line to waypoint is.
@@ -30,6 +36,8 @@ def CalcRelativePathError(state: States.vehicleState, origin:'list[list[float]]'
 
 def CalcCommandedCourse(q: 'list[list[float]]', origin: 'list[list[float]]', chi_inf: float, k_path: float, state:States.vehicleState):
     """
+    Author: Connor Guzikowski (cguzikow)
+    Date: 03.13.2023
     Calculate the Commanded Course, uses previous functions
     @param: q -> path direction of the unit vector k^i
     @param: origin -> position of origin point that the line to waypoint is.
