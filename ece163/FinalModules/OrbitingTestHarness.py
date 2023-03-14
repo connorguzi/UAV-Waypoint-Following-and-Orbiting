@@ -496,6 +496,46 @@ def testing_Orbiting_CalcAngleAlongCircle():
         print(f"{'': <{8}}{'|' : <2}{'phi' : <6}| {ref_phi : <18}| {act_phi : <18}")
 
 
+def testing_Orbiting_CalcCommandedHeight():
+    print("\nBeginning testing of Orbiting.CalcCommandedHeight:")
+
+    # %%
+    cur_test = "Orbiting.CalcCommandedHeight Test 1: cd = 0"
+
+    testCenter = [
+        [0],
+        [0],
+        [0]
+    ]
+    
+    ref_h = 0
+    act_h = Orbiting.CalcCommandedHeight(testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_h, act_h)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'h' : <6}| {ref_h : <18}| {act_h : <18}")
+
+    # %%
+    cur_test = "Orbiting.CalcCommandedHeight Test 2: All cd = -100"
+
+    testCenter = [
+        [0],
+        [0],
+        [-100]
+    ]
+    
+    ref_h = 100
+    act_h = Orbiting.CalcCommandedHeight(testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_h, act_h)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'h' : <6}| {ref_h : <18}| {act_h : <18}")
+
+        
+
+
 # %% Start Message
 print(f"\n\nRunning {os.path.basename(__file__)}:")
 
@@ -504,6 +544,7 @@ print(f"\n\nRunning {os.path.basename(__file__)}:")
 # Test GaussMarkov
 testing_Orbiting_CalcDistFromCenter()
 testing_Orbiting_CalcAngleAlongCircle()
+testing_Orbiting_CalcCommandedHeight()
 
 # %% Print results:
 
