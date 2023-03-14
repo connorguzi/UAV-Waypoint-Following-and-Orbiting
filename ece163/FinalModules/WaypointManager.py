@@ -1,7 +1,13 @@
-import ece163.Utilities.MatrixMath as mm
 import math
-import ece163.Containers.States as States
 import enum
+
+import sys
+
+sys.path.append("./")  # python is horrible, no?
+sys.path.append("..")  # python is horrible, no?
+
+import ece163.Utilities.MatrixMath as mm
+import ece163.Containers.States as States
 
 class WaypointStates(enum.Enum):
 	"""
