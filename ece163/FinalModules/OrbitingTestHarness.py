@@ -355,9 +355,9 @@ def testing_Orbiting_CalcDistFromCenter():
     act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_d, act_d)):
-        print(f"{'': <{8}}{'|' : <2}{'attr' : <30}| {'ref' : <18}| {'act' : <18}")
-        print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<19}|{'' :-<19}")
-        print(f"{'': <{8}}{'|' : <2}{'d' : <30}| {ref_d : <18}| {act_d : <18}")
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'d' : <6}| {ref_d : <18}| {act_d : <18}")
     
     # %%
     cur_test = "Orbiting.CalcDistFromCenter Test 3: moved state, 0 center"
@@ -377,9 +377,9 @@ def testing_Orbiting_CalcDistFromCenter():
     act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_d, act_d)):
-        print(f"{'': <{8}}{'|' : <2}{'attr' : <30}| {'ref' : <18}| {'act' : <18}")
-        print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<19}|{'' :-<19}")
-        print(f"{'': <{8}}{'|' : <2}{'d' : <30}| {ref_d : <18}| {act_d : <18}")
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'d' : <6}| {ref_d : <18}| {act_d : <18}")
 
     # %%
     cur_test = "Orbiting.CalcDistFromCenter Test 4: moved state, moved center"
@@ -399,9 +399,101 @@ def testing_Orbiting_CalcDistFromCenter():
     act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_d, act_d)):
-        print(f"{'': <{8}}{'|' : <2}{'attr' : <30}| {'ref' : <18}| {'act' : <18}")
-        print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<19}|{'' :-<19}")
-        print(f"{'': <{8}}{'|' : <2}{'d' : <30}| {ref_d : <18}| {act_d : <18}")
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'d' : <6}| {ref_d : <18}| {act_d : <18}")
+
+
+def testing_Orbiting_CalcAngleAlongCircle():
+    print("\nBeginning testing of Orbiting.CalcAngleAlongCircle:")
+
+    # %%
+    cur_test = "Orbiting.CalcAngleAlongCircle Test 1: All 0"
+
+    testState = States.vehicleState(
+        pn=0,
+        pe=0,
+        pd=0
+    )
+    testCenter = [
+        [0],
+        [0],
+        [0]
+    ]
+    
+    ref_phi = 0
+    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'phi' : <6}| {ref_phi : <18}| {act_phi : <18}")
+    
+    # %%
+    cur_test = "Orbiting.CalcAngleAlongCircle Test 2: 0 state, moved center"
+
+    testState = States.vehicleState(
+        pn=0,
+        pe=0,
+        pd=0
+    )
+    testCenter = [
+        [-1],
+        [2],
+        [3]
+    ]
+    
+    ref_phi = math.radians(-63.434948822922)
+    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'phi' : <6}| {ref_phi : <18}| {act_phi : <18}")
+
+    # %%
+    cur_test = "Orbiting.CalcAngleAlongCircle Test 3: moved state, 0 center"
+
+    testState = States.vehicleState(
+        pn=-1,
+        pe=-2,
+        pd=3
+    )
+    testCenter = [
+        [0],
+        [0],
+        [0]
+    ]
+    
+    ref_phi = math.radians(63.434948822922-180)
+    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'phi' : <6}| {ref_phi : <18}| {act_phi : <18}")
+
+    # %%
+    cur_test = "Orbiting.CalcAngleAlongCircle Test 4: moved state, moved center"
+
+    testState = States.vehicleState(
+        pn=-1,
+        pe=-2,
+        pd=3
+    )
+    testCenter = [
+        [4],
+        [5],
+        [6]
+    ]
+    
+    ref_phi = math.radians(54.462322208026-180)
+    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+
+    if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
+        print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
+        print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
+        print(f"{'': <{8}}{'|' : <2}{'phi' : <6}| {ref_phi : <18}| {act_phi : <18}")
 
 
 # %% Start Message
@@ -411,6 +503,7 @@ print(f"\n\nRunning {os.path.basename(__file__)}:")
 
 # Test GaussMarkov
 testing_Orbiting_CalcDistFromCenter()
+testing_Orbiting_CalcAngleAlongCircle()
 
 # %% Print results:
 
