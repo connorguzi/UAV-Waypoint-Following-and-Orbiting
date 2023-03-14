@@ -5,7 +5,7 @@ import sys
 
 sys.path.append("./")  # python is horrible, no?
 sys.path.append("..")  # python is horrible, no?
-
+import ece163.Constants.VehiclePhysicalConstants as VPC
 import ece163.Utilities.MatrixMath as mm
 import ece163.Containers.States as States
 from WayPoint import WayPoint
@@ -27,7 +27,8 @@ class WaypointManager():
         if self.WaypointList:
             self.CurrentWaypoint = self.WaypointList[0]
         pass
-
+        self.elapsedOrbit = 0
+        self.dT = VPC.dT
 
     def CalcDirectionVector(self, state: States.vehicleState, waypoint: WayPoint):
         """
@@ -83,23 +84,26 @@ class WaypointManager():
         self.CurrentWaypoint = self.WaypointList[0]
         return
 
-    def Update(self, state: States.vehicleState, waypoints:'list[WayPoint]'):
+    def Update(self, state: States.vehicleState):
         """
         Author: Connor Guzikowski (cguzikow)
         Date: 03.14.2023
-        Function to run the overall state machine for the path planning and orbiting
+        Function to run the overall state machine for the path planning and orbiting.
         @param: state -> current state of UAV
-        @param: waypoint -> position of desired waypoint
-        @param: radius -> defined radius around the waypoint
-
+        @returns course, height
         """
         position = [[state.pn], [state.pe], [state.pd]]
         p_waypoint = self.CurrentWaypoint.location
         if self.WaypointState == WaypointStates.PATH_FOLLOWING:
+            if(self.InWaypointRadius(state=state, waypoint=self.CurrentWaypoint)):
+                self.WaypointState = WaypointStates.ORBITING
             pass
         elif self.WaypointState == WaypointStates.ORBITING:
+            if(self.elapsedOrbit >= self.CurrentWaypoint.time):
+                self.WaypointState = WaypointStates.TRANSITIONING
             pass
         else:
             self.CurrentWaypoint = self.WaypointList[self.WaypointList.index(self.CurrentWaypoint) + 1]
+            self.WaypointState = WaypointStates.ORBITING
             pass
         return 
