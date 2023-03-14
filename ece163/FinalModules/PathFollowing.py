@@ -91,7 +91,7 @@ def CalcProjectedRelativeErrorVector(state:States.vehicleState, n:'list[list[flo
     si = mm.subtract(epi, epi_n) # epi - (epi.n)n
     return si
 
-def CalcCommandedHeight(s, r, q):
+def CalcCommandedHeight(s, origin, q):
     """
     Author: Miguel Tamayo (miatamay)
     Date: 03.13.2023
@@ -102,11 +102,11 @@ def CalcCommandedHeight(s, r, q):
     @param: q -> unit vector with path direction
     """
     
-    hd = -r[2][0] + math.hypot(s[0][0], s[1][0]) * (q[2][0] / math.hypot(q[0][0], q[1][0]))
+    hd = -origin[2][0] + math.hypot(s[0][0], s[1][0]) * (q[2][0] / math.hypot(q[0][0], q[1][0]))
 
     return hd
 
-def getCommandedInputs(r:'list[list[float]]', q: 'list[list[float]]',
+def getCommandedInputs(origin:'list[list[float]]', q: 'list[list[float]]',
                        chi_inf:float, k_path:float, state:States.vehicleState):
     """
     wrapper function to return the commanded course and commanded height
@@ -120,8 +120,8 @@ def getCommandedInputs(r:'list[list[float]]', q: 'list[list[float]]',
     @param: state -> current state of the UAV
     """
     n = CalcUnitNormalVector(q=q)
-    s = CalcProjectedRelativeErrorVector(state=state,n=n,r=r)
-    commandedHeight = CalcCommandedHeight(s=s, r=r, q=q)
-    commandedCourse = CalcCommandedCourse(q=q, origin=r, chi_inf=chi_inf, k_kapth=k_path, state=state)
+    s = CalcProjectedRelativeErrorVector(state=state,n=n,origin=origin)
+    commandedHeight = CalcCommandedHeight(s=s, origin=origin, q=q)
+    commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_kapth=k_path, state=state)
 
     return commandedHeight, commandedCourse

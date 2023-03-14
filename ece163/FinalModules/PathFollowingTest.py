@@ -199,7 +199,7 @@ if compareVectors(expected, result):
 else:
     print("Failed Test")
 
-
+print()
 
 
 
