@@ -203,6 +203,10 @@ else:
 print("Testing CalcCOmmandedHeight")
 commanded_height = PathFollowing.CalcCommandedHeight(projected_error, o, q)
 
+if commanded_height == -1.0:
+    print("Passed Test")
+else:
+    print("Failed Test")
 
 
 
