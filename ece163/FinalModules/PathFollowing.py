@@ -94,3 +94,15 @@ def CalcCommandedHeight(s, r, q):
     hd = -r[2][0] + math.hypot(s[0][0], s[1][0]) * (q[2][0] / math.hypot(q[0][0], q[1][0]))
 
     return hd
+
+def getCommandedInputs(s:'list[list[float]]', r:'list[list[float]]', q: 'list[list[float]]',
+                       origin: 'list[list[float]]', chi_inf:float, k_path:float, state:States.vehicleState):
+    """
+    wrapper function to return the commanded course and commanded height
+    for path following and orbiting
+
+    """
+    commandedHeight = CalcCommandedHeight(s=s, r=r, q=q)
+    commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_kapth=k_path, state=state)
+
+    return commandedHeight, commandedCourse
