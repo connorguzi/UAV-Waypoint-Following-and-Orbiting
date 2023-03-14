@@ -201,6 +201,8 @@ else:
 
 ####################################
 print("Testing CalcCOmmandedHeight")
+commanded_height = PathFollowing.CalcCommandedHeight(projected_error, o, q)
+
 
 
 
