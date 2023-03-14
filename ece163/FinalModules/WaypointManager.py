@@ -27,8 +27,19 @@ def CalcDirectionVector(state: States.vehicleState, waypoint):
 
     """
     position = [[state.pn], [state.pe], [state.pd]]
-    difference = mm.subtract(position, waypoint)
+    difference = mm.subtract(waypoint, position)
     mag = mm.mag(difference)
+    return mm.scalarDivide(mag, difference)
+
+def CalcDirectionVectorTest(position: 'list[list[float]]', waypoint: 'list[list[float]]'):
+    """
+    Calculates the unit direction vector from the UAV to the waypoint
+    @param: state -> current state of UAV
+    @param: waypoint -> position of desired waypoint
+
+    """
+    difference = mm.subtract(waypoint, position)
+    mag = math.hypot(difference[0][0], difference[1][0])
     return mm.scalarDivide(mag, difference)
 
 def InWaypointRadius(state: States.vehicleState, waypoint, radius):
