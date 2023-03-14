@@ -25,6 +25,7 @@ import os
 import math
 import copy
 from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
 
 import ece163.Utilities.MatrixMath as mm
 import ece163.Utilities.Rotations as Rotations
@@ -329,9 +330,9 @@ def testing_Orbiting_CalcDistFromCenter():
         [0],
         [0]
     ]
-    
+
     ref_d = 0
-    act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
+    act_d = Orbiting.CalcDistFromCenter(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_d, act_d)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <30}| {'ref' : <18}| {'act' : <18}")
@@ -351,15 +352,15 @@ def testing_Orbiting_CalcDistFromCenter():
         [4],
         [5]
     ]
-    
+
     ref_d = 5
-    act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
+    act_d = Orbiting.CalcDistFromCenter(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_d, act_d)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
         print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
         print(f"{'': <{8}}{'|' : <2}{'d' : <6}| {ref_d : <18}| {act_d : <18}")
-    
+
     # %%
     cur_test = "Orbiting.CalcDistFromCenter Test 3: moved state, 0 center"
 
@@ -373,9 +374,9 @@ def testing_Orbiting_CalcDistFromCenter():
         [0],
         [0]
     ]
-    
+
     ref_d = 5
-    act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
+    act_d = Orbiting.CalcDistFromCenter(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_d, act_d)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -395,9 +396,9 @@ def testing_Orbiting_CalcDistFromCenter():
         [197],
         [-9.0]
     ]
-    
+
     ref_d = 5
-    act_d = Orbiting.CalcDistFromCenter(testState,testCenter)
+    act_d = Orbiting.CalcDistFromCenter(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_d, act_d)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -421,15 +422,15 @@ def testing_Orbiting_CalcAngleAlongCircle():
         [0],
         [0]
     ]
-    
+
     ref_phi = 0
-    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+    act_phi = Orbiting.CalcAngleAlongCircle(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
         print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
         print(f"{'': <{8}}{'|' : <2}{'phi' : <6}| {ref_phi : <18}| {act_phi : <18}")
-    
+
     # %%
     cur_test = "Orbiting.CalcAngleAlongCircle Test 2: 0 state, moved center"
 
@@ -443,9 +444,9 @@ def testing_Orbiting_CalcAngleAlongCircle():
         [2],
         [3]
     ]
-    
+
     ref_phi = math.radians(-63.434948822922)
-    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+    act_phi = Orbiting.CalcAngleAlongCircle(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -465,9 +466,9 @@ def testing_Orbiting_CalcAngleAlongCircle():
         [0],
         [0]
     ]
-    
+
     ref_phi = math.radians(63.434948822922-180)
-    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+    act_phi = Orbiting.CalcAngleAlongCircle(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -487,9 +488,9 @@ def testing_Orbiting_CalcAngleAlongCircle():
         [5],
         [6]
     ]
-    
+
     ref_phi = math.radians(54.462322208026-180)
-    act_phi = Orbiting.CalcAngleAlongCircle(testState,testCenter)
+    act_phi = Orbiting.CalcAngleAlongCircle(testState, testCenter)
 
     if not evaluateTest(cur_test, isclose(ref_phi, act_phi)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -508,7 +509,7 @@ def testing_Orbiting_CalcCommandedHeight():
         [0],
         [0]
     ]
-    
+
     ref_h = 0
     act_h = Orbiting.CalcCommandedHeight(testCenter)
 
@@ -525,7 +526,7 @@ def testing_Orbiting_CalcCommandedHeight():
         [0],
         [-100]
     ]
-    
+
     ref_h = 100
     act_h = Orbiting.CalcCommandedHeight(testCenter)
 
@@ -554,9 +555,10 @@ def testing_Orbiting_CalcCommandedCourse():
     dir = 1
     rho = 1
     k_orbit = 0
-    
+
     ref_chi = math.pi/2
-    act_chi = Orbiting.CalcCommandedCourse(testState, testCenter, dir, rho, k_orbit)
+    act_chi = Orbiting.CalcCommandedCourse(
+        testState, testCenter, dir, rho, k_orbit)
 
     if not evaluateTest(cur_test, isclose(ref_chi, act_chi)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -579,9 +581,10 @@ def testing_Orbiting_CalcCommandedCourse():
     dir = 1
     rho = 10
     k_orbit = 2
-    
+
     ref_chi = 1.4288992721907
-    act_chi = Orbiting.CalcCommandedCourse(testState, testCenter, dir, rho, k_orbit)
+    act_chi = Orbiting.CalcCommandedCourse(
+        testState, testCenter, dir, rho, k_orbit)
 
     if not evaluateTest(cur_test, isclose(ref_chi, act_chi)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -608,17 +611,18 @@ def testing_Orbiting_getCommandedInputs():
     dir = 1
     rho = 1
     k_orbit = 0
-    
+
     ref_chi = math.pi/2
     ref_h = 0
-    act_h, act_chi = Orbiting.getCommandedInputs(testState, testCenter, dir, rho, k_orbit)
+    act_h, act_chi = Orbiting.getCommandedInputs(
+        testState, testCenter, dir, rho, k_orbit)
 
     if not evaluateTest(cur_test, isclose(ref_chi, act_chi) and isclose(ref_h, act_h)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
         print(f"{'': <{8}}{'|' : <1}{'' :-<7}|{'' :-<19}|{'' :-<19}")
         print(f"{'': <{8}}{'|' : <2}{'h' : <6}| {ref_h : <18}| {act_h : <18}")
         print(f"{'': <{8}}{'|' : <2}{'chi' : <6}| {ref_chi : <18}| {act_chi : <18}")
-    
+
     # %%
     cur_test = "Orbiting.getCommandedInputs Test 2: Basic Values"
 
@@ -635,10 +639,11 @@ def testing_Orbiting_getCommandedInputs():
     dir = 1
     rho = 10
     k_orbit = 2
-    
+
     ref_chi = 1.4288992721907
     ref_h = 200
-    act_h, act_chi = Orbiting.getCommandedInputs(testState, testCenter, dir, rho, k_orbit)
+    act_h, act_chi = Orbiting.getCommandedInputs(
+        testState, testCenter, dir, rho, k_orbit)
 
     if not evaluateTest(cur_test, isclose(ref_chi, act_chi) and isclose(ref_h, act_h)):
         print(f"{'': <{8}}{'|' : <2}{'attr' : <6}| {'ref' : <18}| {'act' : <18}")
@@ -647,6 +652,391 @@ def testing_Orbiting_getCommandedInputs():
         print(f"{'': <{8}}{'|' : <2}{'chi' : <6}| {ref_chi : <18}| {act_chi : <18}")
 
 
+def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
+    print("\nBeginning graphical tests of Orbiting:")
+
+    # %%
+    cur_test = "Orbiting.getCommandedInputs Test 1: Initial point on orbit path"
+
+    vclc = VCLC.VehicleClosedLoopControl()
+    vclc.setControlGains(gains)
+    Va = 20
+    vclc.setVehicleState(States.vehicleState(
+        pn=100,
+        pe=0,
+        pd=-100,
+        u=Va
+    ))
+    center = [
+        [0],
+        [0],
+        [-100]
+    ]
+    dir = 1
+    rho = 100
+    k_orbit = 1
+
+    dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
+    totalTime = 180
+    breakTime = totalTime / 2
+    breakStep = int(breakTime/dT)
+    n_steps = int(totalTime/dT)
+    t_data = [i*dT for i in range(n_steps)]
+
+    chi_c = [0 for i in range(n_steps)]
+    chi_t = [0 for i in range(n_steps)]
+    chi_e = [0 for i in range(n_steps)]
+    h_c = [0 for i in range(n_steps)]
+    h_t = [0 for i in range(n_steps)]
+    h_e = [0 for i in range(n_steps)]
+    x = [0 for i in range(n_steps)]
+    y = [0 for i in range(n_steps)]
+    z = [0 for i in range(n_steps)]
+
+    for i in range(n_steps):        
+        # Update reference commands
+        h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
+            vclc.getVehicleState(), center, dir, rho, k_orbit)
+        controls = Controls.referenceCommands(
+            courseCommand=chi_c[i],
+            altitudeCommand=h_c[i],
+            airspeedCommand=Va
+        )
+
+        # Update state
+        vclc.Update(controls)
+        chi_t[i] = vclc.getVehicleState().chi
+        h_t[i] = -vclc.getVehicleState().pd
+
+        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        h_e[i] = h_t[i] - h_c[i]
+
+        temp = Rotations.ned2enu([[
+            vclc.getVehicleState().pn,
+            vclc.getVehicleState().pe,
+            vclc.getVehicleState().pd
+        ]])
+        x[i] = temp[0][0]
+        y[i] = temp[0][1]
+        z[i] = temp[0][2]
+
+    fig = plt.figure(tight_layout =True)
+    ax = fig.add_subplot(2,1,1, projection='3d')
+    ax.plot3D(x, y, z)
+    ax.set_title("UAV Position [ENU]")
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_zlabel("z [m]")
+
+    ax = fig.add_subplot(2,2,3)
+    ax.plot(t_data, chi_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Course Error [deg]")
+
+    ax = fig.add_subplot(2,2,4)
+    ax.plot(t_data, h_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Altitude Error [m]")
+
+    # Check to show or print plot
+    if printPlots:
+        plt.savefig(f"Plots/OrbitingTest_InitOnOrbit.png")
+    else:
+        plt.show()
+
+    evaluateTest(cur_test, True)
+
+
+def testing_Orbiting_Graphical_InitInOrbit(gains, printPlots=False):
+    # %%
+    cur_test = "Orbiting.getCommandedInputs Test 2: Initial point in orbit"
+
+    vclc = VCLC.VehicleClosedLoopControl()
+    vclc.setControlGains(gains)
+    vclc.setVehicleState(States.vehicleState(
+        pn=0,
+        pe=0,
+        pd=-100
+    ))
+    center = [
+        [0],
+        [0],
+        [-100]
+    ]
+    dir = 1
+    rho = 100
+    k_orbit = 1
+    Va = 20
+
+    dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
+    totalTime = 180
+    breakTime = totalTime / 2
+    breakStep = int(breakTime/dT)
+    n_steps = int(totalTime/dT)
+    t_data = [i*dT for i in range(n_steps)]
+
+    chi_c = [0 for i in range(n_steps)]
+    chi_t = [0 for i in range(n_steps)]
+    chi_e = [0 for i in range(n_steps)]
+    h_c = [0 for i in range(n_steps)]
+    h_t = [0 for i in range(n_steps)]
+    h_e = [0 for i in range(n_steps)]
+    x = [0 for i in range(n_steps)]
+    y = [0 for i in range(n_steps)]
+    z = [0 for i in range(n_steps)]
+
+    for i in range(n_steps):        
+        # Update reference commands
+        h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
+            vclc.getVehicleState(), center, dir, rho, k_orbit)
+        controls = Controls.referenceCommands(
+            courseCommand=chi_c[i],
+            altitudeCommand=h_c[i],
+            airspeedCommand=Va
+        )
+
+        # Update state
+        vclc.Update(controls)
+        chi_t[i] = vclc.getVehicleState().chi
+        h_t[i] = -vclc.getVehicleState().pd
+
+        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        h_e[i] = h_t[i] - h_c[i]
+
+        temp = Rotations.ned2enu([[
+            vclc.getVehicleState().pn,
+            vclc.getVehicleState().pe,
+            vclc.getVehicleState().pd
+        ]])
+        x[i] = temp[0][0]
+        y[i] = temp[0][1]
+        z[i] = temp[0][2]
+
+    fig = plt.figure(tight_layout =True)
+    ax = fig.add_subplot(2,1,1, projection='3d')
+    ax.plot3D(x, y, z)
+    ax.set_title("UAV Position [ENU]")
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_zlabel("z [m]")
+
+    ax = fig.add_subplot(2,2,3)
+    ax.plot(t_data, chi_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Course Error [deg]")
+
+    ax = fig.add_subplot(2,2,4)
+    ax.plot(t_data, h_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Altitude Error [m]")
+
+    # Print or show plots
+    if printPlots:
+        plt.savefig(f"Plots/OrbitingTest_InitInOrbit.png")
+    else:
+        plt.show()
+
+    evaluateTest(cur_test, True)
+
+
+def testing_Orbiting_Graphical_InitOutOrbit(gains, printPlots=False):
+    # %%
+    cur_test = "Orbiting.getCommandedInputs Test 3: Initial point outside orbit path"
+
+    vclc = VCLC.VehicleClosedLoopControl()
+    vclc.setControlGains(gains)
+    vclc.setVehicleState(States.vehicleState(
+        pn=200,
+        pe=0,
+        pd=-100
+    ))
+    center = [
+        [0],
+        [0],
+        [-100]
+    ]
+    dir = 1
+    rho = 100
+    k_orbit = 1
+    Va = 20
+
+    dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
+    totalTime = 180
+    breakTime = totalTime / 2
+    breakStep = int(breakTime/dT)
+    n_steps = int(totalTime/dT)
+    t_data = [i*dT for i in range(n_steps)]
+
+    chi_c = [0 for i in range(n_steps)]
+    chi_t = [0 for i in range(n_steps)]
+    chi_e = [0 for i in range(n_steps)]
+    h_c = [0 for i in range(n_steps)]
+    h_t = [0 for i in range(n_steps)]
+    h_e = [0 for i in range(n_steps)]
+    x = [0 for i in range(n_steps)]
+    y = [0 for i in range(n_steps)]
+    z = [0 for i in range(n_steps)]
+
+    for i in range(n_steps):        
+        # Update reference commands
+        h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
+            vclc.getVehicleState(), center, dir, rho, k_orbit)
+        controls = Controls.referenceCommands(
+            courseCommand=chi_c[i],
+            altitudeCommand=h_c[i],
+            airspeedCommand=Va
+        )
+
+        # Update state
+        vclc.Update(controls)
+        chi_t[i] = vclc.getVehicleState().chi
+        h_t[i] = -vclc.getVehicleState().pd
+
+        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        h_e[i] = h_t[i] - h_c[i]
+
+        temp = Rotations.ned2enu([[
+            vclc.getVehicleState().pn,
+            vclc.getVehicleState().pe,
+            vclc.getVehicleState().pd
+        ]])
+        x[i] = temp[0][0]
+        y[i] = temp[0][1]
+        z[i] = temp[0][2]
+
+    fig = plt.figure(tight_layout =True)
+    ax = fig.add_subplot(2,1,1, projection='3d')
+    ax.plot3D(x, y, z)
+    ax.set_title("UAV Position [ENU]")
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_zlabel("z [m]")
+
+    ax = fig.add_subplot(2,2,3)
+    ax.plot(t_data, chi_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Course Error [deg]")
+
+    ax = fig.add_subplot(2,2,4)
+    ax.plot(t_data, h_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Altitude Error [m]")
+
+    # Print or show plots
+    if printPlots:
+        plt.savefig(f"Plots/OrbitingTest_InitOutOrbit.png")
+    else:
+        plt.show()
+
+    evaluateTest(cur_test, True)
+
+
+def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
+    # %%
+    cur_test = "Orbiting.getCommandedInputs Test 4: Change Orbit"
+
+    vclc = VCLC.VehicleClosedLoopControl()
+    vclc.setControlGains(gains)
+    vclc.setVehicleState(States.vehicleState(
+        pn=200,
+        pe=0,
+        pd=-100
+    ))
+    center = [
+        [0],
+        [0],
+        [-100]
+    ]
+    dir = 1
+    rho = 100
+    k_orbit = 1
+    Va = 20
+
+    dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
+    totalTime = 300
+    breakTime = totalTime / 2
+    breakStep = int(breakTime/dT)
+    n_steps = int(totalTime/dT)
+    t_data = [i*dT for i in range(n_steps)]
+
+    chi_c = [0 for i in range(n_steps)]
+    chi_t = [0 for i in range(n_steps)]
+    chi_e = [0 for i in range(n_steps)]
+    h_c = [0 for i in range(n_steps)]
+    h_t = [0 for i in range(n_steps)]
+    h_e = [0 for i in range(n_steps)]
+    x = [0 for i in range(n_steps)]
+    y = [0 for i in range(n_steps)]
+    z = [0 for i in range(n_steps)]
+
+    for i in range(n_steps):  
+        if i == breakStep:
+            center = [
+                [300],
+                [1000],
+                [-300]
+            ]
+            dir = -1
+            rho = 200
+        # Update reference commands
+        h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
+            vclc.getVehicleState(), center, dir, rho, k_orbit)
+        controls = Controls.referenceCommands(
+            courseCommand=chi_c[i],
+            altitudeCommand=h_c[i],
+            airspeedCommand=Va
+        )
+
+        # Update state
+        vclc.Update(controls)
+        chi_t[i] = vclc.getVehicleState().chi
+        h_t[i] = -vclc.getVehicleState().pd
+
+        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        h_e[i] = h_t[i] - h_c[i]
+
+        temp = Rotations.ned2enu([[
+            vclc.getVehicleState().pn,
+            vclc.getVehicleState().pe,
+            vclc.getVehicleState().pd
+        ]])
+        x[i] = temp[0][0]
+        y[i] = temp[0][1]
+        z[i] = temp[0][2]
+
+    fig = plt.figure(tight_layout =True)
+    ax = fig.add_subplot(2,1,1, projection='3d')
+    ax.plot3D(x, y, z)
+    ax.set_title("UAV Position [ENU]")
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_zlabel("z [m]")
+
+    ax = fig.add_subplot(2,2,3)
+    ax.plot(t_data, chi_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Course Error [deg]")
+
+    ax = fig.add_subplot(2,2,4)
+    ax.plot(t_data, h_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Altitude Error [m]")
+
+    # Print or show plots
+    if printPlots:
+        plt.savefig(f"Plots/OrbitingTest_ChangeOrbit.png")
+    else:
+        plt.show()
+
+    evaluateTest(cur_test, True)
 
 # %% Start Message
 print(f"\n\nRunning {os.path.basename(__file__)}:")
@@ -654,11 +1044,55 @@ print(f"\n\nRunning {os.path.basename(__file__)}:")
 # %% Run Tests
 
 # Test GaussMarkov
-testing_Orbiting_CalcDistFromCenter()
-testing_Orbiting_CalcAngleAlongCircle()
-testing_Orbiting_CalcCommandedHeight()
-testing_Orbiting_CalcCommandedCourse()
-testing_Orbiting_getCommandedInputs()
+# testing_Orbiting_CalcDistFromCenter()
+# testing_Orbiting_CalcAngleAlongCircle()
+# testing_Orbiting_CalcCommandedHeight()
+# testing_Orbiting_CalcCommandedCourse()
+# testing_Orbiting_getCommandedInputs()
+
+# Get trim state
+vTrim = VehicleTrim.VehicleTrim()
+Vastar = 25.0
+Gammastar = 0
+Kappastar = 0
+
+check = vTrim.computeTrim(Vastar, Kappastar, Gammastar)
+if check:
+    # Calculate transfer function
+    tF = VPM.CreateTransferFunction(
+        vTrim.getTrimState(),
+        vTrim.getTrimControls())
+else:
+    print("Model converged outside of valid inputs, change parameters and try again")
+
+# Get gains
+tuningParameters=Controls.controlTuning(
+    Wn_roll=20.61778493279331, Zeta_roll=2.7641222974190165,
+    Wn_course=0.1313209195267308, Zeta_course=2.818882757405783,
+    Wn_sideslip=0.03880705477100873, Zeta_sideslip=11.260307631650688,
+    Wn_pitch=20.86294694878792, Zeta_pitch=0.4099245488649988,
+    Wn_altitude=0.5618493957843352, Zeta_altitude=0.6792963357600577,
+    Wn_SpeedfromThrottle=0.4198550394801563, Zeta_SpeedfromThrottle=0.58789323485635,
+    Wn_SpeedfromElevator=0.1225180174744648, Zeta_SpeedfromElevator=7.322281351008753
+)
+gains = VCG.computeGains(tuningParameters, tF)
+
+print(f"\tTuningParameters:")
+print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<31}")
+for key, val in vars(tuningParameters).items():
+    print(f"{'': <{8}}{'|' : <2}{key : <30}| {val: <18}")
+
+print(f"\tGains:")
+print(f"{'': <{8}}{'|' : <1}{'' :-<31}|{'' :-<31}")
+for key, val in vars(gains).items():
+    print(f"{'': <{8}}{'|' : <2}{key : <30}| {val: <18}")
+
+
+printPlot = False
+testing_Orbiting_Graphical_InitOnOrbit(gains, printPlot)
+testing_Orbiting_Graphical_InitInOrbit(gains, printPlot)
+testing_Orbiting_Graphical_InitOutOrbit(gains, printPlot)
+testing_Orbiting_Graphical_ChangeOrbit(gains, printPlot)
 
 # %% Print results:
 
