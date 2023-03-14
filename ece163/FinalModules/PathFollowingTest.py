@@ -7,6 +7,7 @@ sys.path.append("..")  # python is horrible, no?
 
 import math
 import PathFollowing
+import ece163.Containers.States as States
 
 """math.isclose doesn't work well for comparing things near 0 unless we 
 use an absolute tolerance, so we make our own isclose:"""
@@ -66,7 +67,7 @@ def evaluateTest(test_name, boolean):
 ### PATH FOLLOWING EQUATIONS TEST ###
 # this is for numerical testing of each individual function
 
-# CalcPathCourseAngle
+######################################
 print("Testing CalcPathCourseAngle()")
 q = [[2.0], [3.0], [4.0]]
 cur_test = "CalcPathCourseAngle Normal"
@@ -101,6 +102,7 @@ else:
     print("Failed test 3")
     failed.append(cur_test)
 
+######################################
 print("Testing CalcR_Inertial2Path()")
 cur_test = "CalcR_Inertial2Path chi=0"
 chi = 0
@@ -125,6 +127,37 @@ if compareMatrix(expected, R):
 else:
     print("Failed test 2")
     failed.append(cur_test)
+
+#####################################
+print("Test CalcRelativePathError()")
+cur_test = "CalcRelativePathError at origin"
+state = States.vehicleState(pn=0.0, pe=0.0, pd=0.0)
+o = [[1.0], [1.0], [1.0]]
+R = PathFollowing.CalcR_Inertial2Path(0)
+expected = [[-1.0], [-1.0], [-1.0]]
+error = PathFollowing.CalcRelativePathError(state, o, R)
+
+if compareVectors(expected, error):
+    print("Passed test 1")
+    passed.append(cur_test)
+else:
+    print("Failed test 1")
+    failed.append(cur_test)
+
+cur_test = "CalcRelativePathError moved"
+state.pn = 2.0
+state.pe = 3.0
+state.pd = 4.0
+expected = [[1.0], [2.0], [3.0]]
+error = PathFollowing.CalcRelativePathError(state, o, R)
+
+if compareVectors(expected, error):
+    print("Passed test 2")
+    passed.append(cur_test)
+else:
+    print("Failed test 2")
+    failed.append(cur_test)
+
 
 
 
