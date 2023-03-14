@@ -7,4 +7,5 @@ ece163/Simulation/__pycache__/
 ece163/Utilities/__pycache__/
 ece163/Constants/__pycache__/
 ece163/Containers/__pycache__/
+ece163/FinalModules/__pycache__/
 .gitlab-ci.yml

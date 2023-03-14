@@ -1,6 +1,6 @@
-import ece163.Utilities.MatrixMath as mm
+from Utilities import MatrixMath as mm
 import math
-import ece163.Containers.States as States
+from Containers import States
 import enum
 
 class WaypointStates(enum.Enum):
