@@ -192,14 +192,16 @@ print("Testing CalcProjectedRelativeErrorVector")
 state = States.vehicleState(pn = 2.0, pe=3.0, pd=4.0)
 o = [[1.0], [1.0], [1.0]]
 
-result = PathFollowing.CalcProjectedRelativeErrorVector(state=state, n=unit_vector, origin=o)
+projected_error = PathFollowing.CalcProjectedRelativeErrorVector(state=state, n=unit_vector, origin=o)
 expected = [[1.0], [0.0], [3.0]]
-if compareVectors(expected, result):
+if compareVectors(expected, projected_error):
     print("Passed Test")
 else:
     print("Failed Test")
 
-print()
+####################################
+print("Testing CalcCOmmandedHeight")
+
 
 
 

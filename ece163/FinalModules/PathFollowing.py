@@ -122,6 +122,6 @@ def getCommandedInputs(origin:'list[list[float]]', q: 'list[list[float]]',
     n = CalcUnitNormalVector(q=q)
     s = CalcProjectedRelativeErrorVector(state=state,n=n,origin=origin)
     commandedHeight = CalcCommandedHeight(s=s, origin=origin, q=q)
-    commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_kapth=k_path, state=state)
+    commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_path=k_path, state=state)
 
     return commandedHeight, commandedCourse
