@@ -504,6 +504,122 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
 
     evaluateTest(cur_test, True)
 
+def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
+    print("\nBeginning graphical tests of Orbiting:")
+
+    # %%
+    cur_test = "WaypointManager Test 1: Following set points"
+    origin = [[100], [0], [-100]]
+    Waypoint1 = WayPoint.WayPoint(
+        n = 0,
+        e = 0,
+        d = -100,
+        radius = 100,
+        direction = 1,
+        time = 40,
+    )
+    Waypoint2 = WayPoint.WayPoint(
+        n = 100,
+        e = 0,
+        d = -100,
+        radius = 100,
+        direction = 1,
+        time=10,
+    )
+    Waypoint3 = WayPoint.WayPoint(
+        n = 100,
+        e = 100,
+        d = -100,
+        radius = 100,
+        direction = 1,
+        time=20,
+    )
+    k_orbit = 1
+    k_path = 1
+    WpList = [Waypoint1, Waypoint2, Waypoint3]
+    WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
+    vclc = VCLC.VehicleClosedLoopControl()
+    vclc.setControlGains(gains)
+    Va = 20
+    vclc.setVehicleState(States.vehicleState(
+        pn=100,
+        pe=0,
+        pd=-100,
+        u=Va
+    ))
+
+
+    dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
+    totalTime = 240
+    breakTime = totalTime / 2
+    breakStep = int(breakTime/dT)
+    n_steps = int(totalTime/dT)
+    t_data = [i*dT for i in range(n_steps)]
+
+    chi_c = [0 for i in range(n_steps)]
+    chi_t = [0 for i in range(n_steps)]
+    chi_e = [0 for i in range(n_steps)]
+    h_c = [0 for i in range(n_steps)]
+    h_t = [0 for i in range(n_steps)]
+    h_e = [0 for i in range(n_steps)]
+    x = [0 for i in range(n_steps)]
+    y = [0 for i in range(n_steps)]
+    z = [0 for i in range(n_steps)]
+
+    for i in range(n_steps):        
+        # Update reference commands
+        h_c[i], chi_c[i] = WM.Update(state=vclc.getVehicleState())
+        controls = Controls.referenceCommands(
+            courseCommand=chi_c[i],
+            altitudeCommand=h_c[i],
+            airspeedCommand=Va
+        )
+
+        # Update state
+        vclc.Update(controls)
+        chi_t[i] = vclc.getVehicleState().chi
+        h_t[i] = -vclc.getVehicleState().pd
+
+        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        h_e[i] = h_t[i] - h_c[i]
+
+        temp = Rotations.ned2enu([[
+            vclc.getVehicleState().pn,
+            vclc.getVehicleState().pe,
+            vclc.getVehicleState().pd
+        ]])
+        x[i] = temp[0][0]
+        y[i] = temp[0][1]
+        z[i] = temp[0][2]
+
+    fig = plt.figure(tight_layout =True)
+    ax = fig.add_subplot(2,1,1, projection='3d')
+    ax.plot3D(x, y, z)
+    ax.set_title("UAV Position [ENU]")
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_zlabel("z [m]")
+
+    ax = fig.add_subplot(2,2,3)
+    ax.plot(t_data, chi_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Course Error [deg]")
+
+    ax = fig.add_subplot(2,2,4)
+    ax.plot(t_data, h_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Altitude Error [m]")
+
+    # Check to show or print plot
+    if printPlots:
+        plt.savefig(f"Plots/OrbitingTest_InitOnOrbit.png")
+    else:
+        plt.show()
+
+    evaluateTest(cur_test, True)
+
 # %% Start Message
 print(f"\n\nRunning {os.path.basename(__file__)}:")
 
@@ -551,8 +667,9 @@ for key, val in vars(gains).items():
 
 
 printPlot = False
-testing_Orbiting_Graphical_InitOnOrbit(gains, printPlot)
+# testing_Orbiting_Graphical_InitOnOrbit(gains, printPlot)
 
+testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlot)
 # %% Print results:
 
 total = len(passed) + len(failed)

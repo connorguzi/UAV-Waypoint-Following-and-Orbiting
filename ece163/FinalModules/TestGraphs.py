@@ -40,3 +40,8 @@ plt.grid()
 print(x)
 plt.quiver(x,y,u, v, units='xy', scale=2)
 plt.show()
+
+waypoint = [[0], [0]]
+x,y, = np.meshgrid(np.linspace(-10, 10, 10), np.linspace(-10, 10, 10))
+u = (waypoint[0][0]-x) / np.sqrt((waypoint[0][0] - x)**2 + (waypoint[1][0] -y)**2)
+v = (waypoint[1][0]-y) /np.sqrt((waypoint[0][0] - x)**2 + (waypoint[1][0] -y)**2)
