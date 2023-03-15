@@ -158,6 +158,49 @@ else:
     print("Failed test 2")
     failed.append(cur_test)
 
+######################################
+print("Testing CalcCommandedCourse()")
+cur_test = "CalcCommandedCourse"
+q = [[0.0], [1.0], [2.0]]
+chi_inf = math.pi / 2.0
+k_path = 10
+course = PathFollowing.CalcCommandedCourse(q=q, origin=o, chi_inf=chi_inf, k_path=10, state=state)
+expected = -1.520837931
+
+if isclose(expected, course):
+    print("Passed test")
+    passed.append(cur_test)
+else:
+    print("Failed test")
+    failed.append(cur_test)
+
+#################################################
+print("Testing CalcUnitNormalVector")
+q = [[1.0], [0.0], [0.0]]
+unit_vector = PathFollowing.CalcUnitNormalVector(q)
+expected = [[0.0], [-1.0], [0.0]]
+
+if compareVectors(expected, unit_vector):
+    print("Passed Test")
+else:
+    print("Failed Test")
+
+# print(unit_vector)
+
+#################################################
+print("Testing CalcProjectedRelativeErrorVector")
+state = States.vehicleState(pn = 2.0, pe=3.0, pd=4.0)
+o = [[1.0], [1.0], [1.0]]
+
+result = PathFollowing.CalcProjectedRelativeErrorVector(state=state, n=unit_vector, origin=o)
+expected = [[1.0], [0.0], [3.0]]
+if compareVectors(expected, result):
+    print("Passed Test")
+else:
+    print("Failed Test")
+
+
+
 
 
 
