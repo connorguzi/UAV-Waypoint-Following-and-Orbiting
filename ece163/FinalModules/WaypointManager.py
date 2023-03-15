@@ -28,7 +28,6 @@ class WaypointManager():
         self.WaypointList = WaypointList
         if self.WaypointList:
             self.CurrentWaypoint = self.WaypointList[0]
-        pass
         self.elapsedOrbit = 0
         self.dT = VPC.dT
         self.chi_inf = math.pi / 2
