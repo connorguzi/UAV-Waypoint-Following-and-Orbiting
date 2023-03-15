@@ -15,7 +15,7 @@ def CalcPathCourseAngle(q: 'list[list[float]]', state:States.vehicleState):
     Calculate the unit vector normal to the q-k^i plane.
     @param: q -> path direction of the unit vector k^i
     """
-    chi_q = math.atan2(q[0][0], q[1][0])
+    chi_q = math.atan2(q[1][0], q[0][0])
 
     # Keep -pi <= chi_q - chi <= pi
     while (chi_q - state.chi) < -math.pi:
