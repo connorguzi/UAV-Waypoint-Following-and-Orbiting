@@ -8,14 +8,23 @@ import math
 import ece163.Containers.States as States
 
 
-def CalcPathCourseAngle(q: 'list[list[float]]'):
+def CalcPathCourseAngle(q: 'list[list[float]]', state:States.vehicleState):
     """
     Author: Connor Guzikowski (cguzikow)
     Date: 03.13.2023
     Calculate the unit vector normal to the q-k^i plane.
     @param: q -> path direction of the unit vector k^i
     """
-    return math.atan2(q[0][0], q[1][0])
+    chi_q = math.atan2(q[0][0], q[1][0])
+    # chi_q = math.atan2(q[1][0], q[0][0])
+
+    # Keep -pi <= chi_q - chi <= pi
+    while (chi_q - state.chi) < -math.pi:
+        chi_q += 2*math.pi
+    while (chi_q - state.chi) > math.pi:
+        chi_q -= 2*math.pi
+    
+    return chi_q
 
 def CalcR_Inertial2Path(chi: float):
     """
@@ -51,7 +60,7 @@ def CalcCommandedCourse(q: 'list[list[float]]', origin: 'list[list[float]]', chi
     @param: state -> current state of the UAV
 
     """
-    chi_q = CalcPathCourseAngle(q)
+    chi_q = CalcPathCourseAngle(q, state)
     R = CalcR_Inertial2Path(chi_q)
     e = CalcRelativePathError(state=state, origin=origin, R=R)
     return chi_q - chi_inf * (2.0 / math.pi) * math.atan(k_path * e[1][0])
