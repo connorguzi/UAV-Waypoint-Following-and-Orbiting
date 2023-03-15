@@ -505,7 +505,7 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
     evaluateTest(cur_test, True)
 
 def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
-    print("\nBeginning graphical tests of Orbiting:")
+    print("\nBeginning graphical tests of Waypoint Manager:")
 
     # %%
     cur_test = "WaypointManager Test 1: Following set points"
@@ -535,7 +535,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         time=20,
     )
     k_orbit = 1
-    k_path = 1
+    k_path = .01
     WpList = [Waypoint1, Waypoint2, Waypoint3]
     WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
     vclc = VCLC.VehicleClosedLoopControl()
@@ -595,6 +595,9 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
     fig = plt.figure(tight_layout =True)
     ax = fig.add_subplot(2,1,1, projection='3d')
     ax.plot3D(x, y, z)
+    ax.plot3D(*Waypoint1.location, marker="o", markersize=5, color='r')
+    ax.plot3D(*Waypoint2.location, marker="o", markersize=5, color='r')
+    ax.plot3D(*Waypoint3.location, marker="o", markersize=5, color='r')
     ax.set_title("UAV Position [ENU]")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
