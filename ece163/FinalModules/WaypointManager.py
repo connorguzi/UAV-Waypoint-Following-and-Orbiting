@@ -9,19 +9,21 @@ import ece163.Constants.VehiclePhysicalConstants as VPC
 import ece163.Utilities.MatrixMath as mm
 import ece163.Containers.States as States
 from WayPoint import WayPoint
+import ece163.FinalModules.Orbiting as Orbiting
+import ece163.FinalModules.PathFollowing as PathFollowing
+
 class WaypointStates(enum.Enum):
 	"""
 	class WaypointStates(enum.Enum):
 	Enumeration class for the waypoint following/orbiting state machine. Defines three states that we will be using to reset the PI integrators
 	when switching between different states.
 	"""
-	TRANSITIONING = enum.auto()
 	PATH_FOLLOWING = enum.auto()
 	ORBITING = enum.auto()
 
 
 class WaypointManager():
-    def __init__(self, WaypointList, k_path = 0.05, origin = [[0], [0], [0]]) -> None:
+    def __init__(self, WaypointList, k_path = 0.05, k_orbit = 0.05, origin = [[0], [0], [0]]) -> None:
         self.WaypointState = WaypointStates.PATH_FOLLOWING
         self.WaypointList = WaypointList
         if self.WaypointList:
@@ -31,8 +33,9 @@ class WaypointManager():
         self.dT = VPC.dT
         self.chi_inf = math.pi / 2
         self.k_path = k_path
+        self.k_orbit = k_orbit
         self.origin = origin
-        
+
     def CalcDirectionVector(self, state: States.vehicleState, waypoint: WayPoint):
         """
         Author: Connor Guzikowski (cguzikow)
@@ -93,20 +96,36 @@ class WaypointManager():
         Date: 03.14.2023
         Function to run the overall state machine for the path planning and orbiting.
         @param: state -> current state of UAV
-        @returns course, height
+        @returns height, course
         """
+        # Creating variabled for the position of the state and the waypoint
         position = [[state.pn], [state.pe], [state.pd]]
         p_waypoint = self.CurrentWaypoint.location
+        # Direction Vector
+        q = self.CalcDirectionVector(state=state, waypoint=self.CurrentWaypoint)
+        
         if self.WaypointState == WaypointStates.PATH_FOLLOWING:
+            # Check to see if the UAV is in the orbit radius
             if(self.InWaypointRadius(state=state, waypoint=self.CurrentWaypoint)):
                 self.WaypointState = WaypointStates.ORBITING
-            pass
+                height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
+
+            else:
+                height_command, course_command = PathFollowing.getCommandedInputs(state=state, r=self.origin, q=q, chi_inf=self.chi_inf, k_path=self.k_path)
+       
         elif self.WaypointState == WaypointStates.ORBITING:
+            # See if the orbit has orbited for the set time
             if(self.elapsedOrbit >= self.CurrentWaypoint.time):
-                self.WaypointState = WaypointStates.TRANSITIONING
-            pass
-        else:
-            self.CurrentWaypoint = self.WaypointList[self.WaypointList.index(self.CurrentWaypoint) + 1]
-            self.WaypointState = WaypointStates.ORBITING
-            pass
-        return 
+                # Set the next waypoint, change state, and reset orbit time
+                self.origin = self.CurrentWaypoint.location
+                self.CurrentWaypoint = self.WaypointList[self.WaypointList.index(self.CurrentWaypoint) + 1]
+                self.WaypointState = WaypointStates.PATH_FOLLOWING
+                self.elapsedOrbit = 0
+                height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
+            
+            # Increase elapsed time and adjust the commands
+            else:
+                self.elapsedOrbit += self.dT
+                height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
+            
+        return height_command, course_command
