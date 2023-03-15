@@ -23,11 +23,12 @@ class WaypointStates(enum.Enum):
 
 
 class WaypointManager():
-    def __init__(self, WaypointList, k_path = 0.05, k_orbit = 0.05, origin = [[0], [0], [0]]) -> None:
+    def __init__(self, WaypointList=None, k_path = 0.05, k_orbit = 0.05, origin = [[0], [0], [0]]) -> None:
         self.WaypointState = WaypointStates.PATH_FOLLOWING
         self.WaypointList = WaypointList
         if self.WaypointList:
             self.CurrentWaypoint = self.WaypointList[0]
+        self.CurrentWaypoint = WayPoint(0,0,0)
         self.elapsedOrbit = 0
         self.dT = VPC.dT
         self.chi_inf = math.pi / 2
@@ -117,7 +118,11 @@ class WaypointManager():
             if(self.elapsedOrbit >= self.CurrentWaypoint.time):
                 # Set the next waypoint, change state, and reset orbit time
                 self.origin = self.CurrentWaypoint.location
-                self.CurrentWaypoint = self.WaypointList[self.WaypointList.index(self.CurrentWaypoint) + 1]
+                # Make sure that the index does not exceed list length
+                i = self.WaypointList.index(self.CurrentWaypoint) + 1
+                if i >= len(self.WaypointList):
+                    i = 0
+                self.CurrentWaypoint = self.WaypointList[i]
                 self.WaypointState = WaypointStates.PATH_FOLLOWING
                 self.elapsedOrbit = 0
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
