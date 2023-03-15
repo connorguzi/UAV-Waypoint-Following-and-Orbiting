@@ -98,9 +98,6 @@ class WaypointManager():
         @param: state -> current state of UAV
         @returns height, course
         """
-        # Creating variabled for the position of the state and the waypoint
-        position = [[state.pn], [state.pe], [state.pd]]
-        p_waypoint = self.CurrentWaypoint.location
         # Direction Vector
         q = self.CalcDirectionVector(state=state, waypoint=self.CurrentWaypoint)
         
