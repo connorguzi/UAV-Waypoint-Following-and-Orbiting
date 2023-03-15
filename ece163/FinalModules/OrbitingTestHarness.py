@@ -948,13 +948,21 @@ def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
         pe=0,
         pd=-100
     ))
-    testWaypoint = WayPoint.WayPoint(
+    waypoint1 = WayPoint.WayPoint(
         n = 0,
         e = 0,
         d = -100,
         radius = 100,
         direction = 1,
     )
+    waypoint2 = WayPoint.WayPoint(
+        n = 300,
+        e = 1000,
+        d = -300,
+        radius = 200,
+        direction = -1,
+    )
+    testWaypoint = waypoint1
     k_orbit = 1
     Va = 20
 
@@ -978,13 +986,8 @@ def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
     for i in range(n_steps):
         # Update orbit target  
         if i == breakStep:
-            testWaypoint = WayPoint.WayPoint(
-                n = 300,
-                e = 1000,
-                d = -300,
-                radius = 200,
-                direction = -1,
-            )
+            testWaypoint = waypoint2
+
         # Update reference commands
         h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
             vclc.getVehicleState(), testWaypoint, k_orbit)
@@ -1001,24 +1004,38 @@ def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
 
         chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
         h_e[i] = h_t[i] - h_c[i]
+        
+        x[i] = vclc.getVehicleState().pn
+        y[i] = vclc.getVehicleState().pe
+        z[i] = -vclc.getVehicleState().pd
 
-        temp = Rotations.ned2enu([[
-            vclc.getVehicleState().pn,
-            vclc.getVehicleState().pe,
-            vclc.getVehicleState().pd
-        ]])
-        x[i] = temp[0][0]
-        y[i] = temp[0][1]
-        z[i] = temp[0][2]
+    # Plot Position and expected orbits
+    points = range(0,1001)
+    angles = [2*math.pi*i/len(points) for i in points]
+
+    R1 = waypoint1.radius
+    center1 = waypoint1.getPointLocation()
+    x_data1 = [center1[0][0] + math.cos(angles[i])*R1 for i in points]
+    y_data1 = [center1[1][0] + math.sin(angles[i])*R1 for i in points]
+    z_data1 = [-center1[2][0] for i in points]
+
+    R2 = waypoint2.radius
+    center2 = waypoint2.getPointLocation()
+    x_data2 = [center2[0][0] + math.cos(angles[i])*R2 for i in points]
+    y_data2 = [center2[1][0] + math.sin(angles[i])*R2 for i in points]
+    z_data2 = [-center2[2][0] for i in points]
 
     fig = plt.figure(tight_layout =True)
     ax = fig.add_subplot(2,1,1, projection='3d')
     ax.plot3D(x, y, z)
-    ax.set_title("UAV Position [ENU]")
+    ax.plot3D(x_data1, y_data1, z_data1, color='orange')
+    ax.plot3D(x_data2, y_data2, z_data2, color='orange')
+    ax.set_title("UAV Position [NEU]")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
 
+    # Plot Errors
     ax = fig.add_subplot(2,2,3)
     ax.plot(t_data, chi_e)
     ax.set_title(" ")
@@ -1090,9 +1107,9 @@ for key, val in vars(gains).items():
 
 
 printPlot = False
-testing_Orbiting_Graphical_InitOnOrbit(gains, printPlot)
-testing_Orbiting_Graphical_InitInOrbit(gains, printPlot)
-testing_Orbiting_Graphical_InitOutOrbit(gains, printPlot)
+# testing_Orbiting_Graphical_InitOnOrbit(gains, printPlot)
+# testing_Orbiting_Graphical_InitInOrbit(gains, printPlot)
+# testing_Orbiting_Graphical_InitOutOrbit(gains, printPlot)
 testing_Orbiting_Graphical_ChangeOrbit(gains, printPlot)
 
 # %% Print results:
