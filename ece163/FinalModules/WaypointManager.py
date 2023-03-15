@@ -64,7 +64,7 @@ class WaypointManager():
         mag = math.hypot(difference[0][0], difference[1][0])
         return mm.scalarDivide(mag, difference)
 
-    def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint, radius: float):
+    def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
         """
         Author: Connor Guzikowski (cguzikow)
         Date: 03.13.2023
@@ -76,7 +76,7 @@ class WaypointManager():
         """
         p_waypoint = waypoint.location
         position = [[state.pn], [state.pe], [state.pd]]
-        return mm.mag(mm.subtract(position, p_waypoint)) <= radius
+        return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
 
     def SetWaypointList(self, waypoints:'list[WayPoint]'):
         """
@@ -108,7 +108,7 @@ class WaypointManager():
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
 
             else:
-                height_command, course_command = PathFollowing.getCommandedInputs(state=state, r=self.origin, q=q, chi_inf=self.chi_inf, k_path=self.k_path)
+                height_command, course_command = PathFollowing.getCommandedInputs(state=state, origin=self.origin, q=q, chi_inf=self.chi_inf, k_path=self.k_path)
        
         elif self.WaypointState == WaypointStates.ORBITING:
             # See if the orbit has orbited for the set time
