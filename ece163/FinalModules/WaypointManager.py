@@ -132,4 +132,4 @@ class WaypointManager():
                 self.elapsedOrbit += self.dT
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
             
-        return -height_command, course_command
+        return height_command, course_command
