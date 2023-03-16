@@ -36,8 +36,10 @@ import ece163.Containers.Sensors as Sensors
 import ece163.Constants.VehiclePhysicalConstants as VPC
 import ece163.Constants.VehicleSensorConstants as VSC
 
+import ece163.FinalModules.WayPoint as WayPoint
+
 ##### GAINS #####
-gains = Controls.controlGains() # UAV gains
+gains = Controls.controlGains() # UAV gains object
 gains.kp_roll = 3.247869110823198
 gains.kd_roll = 0.6979579782269094
 gains.ki_roll = 0.001
@@ -53,6 +55,12 @@ gains.kp_SpeedfromThrottle = 0.020000011427928222
 gains.ki_SpeedfromThrottle = 0.017583562590727155
 gains.kp_SpeedfromElevator = -0.1986227880728017
 gains.ki_SpeedfromElevator = -0.0019862278473563194
+
+##### WAYPOINT MANAGER #####
+point1 = WayPoint.WayPoint(
+    n=100,
+    
+)
 
 ##### VEHICLE SETUP #####
 Va = 20 # airspeed
@@ -73,6 +81,21 @@ dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
 totalTime = 240 # total simulation time [s]
 n_steps = int(totalTime / dT) # simulation steps
 t_data = [i*dT for i in range(n_steps)] # time array
+
+chi_commanded = [0 for i in range(n_steps)] # commanded course
+chi_true = [0 for i in range(n_steps)] # true course
+chi_error = [0 for i in range(n_steps)] # course error
+
+height_commanded = [0 for i in range(n_steps)] # commanded height
+height_true = [0 for i in range(n_steps)] # UAV height
+height_error = [0 for i in range(n_steps)] # height error
+
+n = [0 for i in range(n_steps)] # north coordinate
+e = [0 for i in range(n_steps)] # east coordinate
+d = [0 for i in range(n_steps)] # down coordinate
+
+
+
 
 
 
