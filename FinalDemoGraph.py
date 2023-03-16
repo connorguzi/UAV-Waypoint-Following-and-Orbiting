@@ -54,4 +54,26 @@ gains.ki_SpeedfromThrottle = 0.017583562590727155
 gains.kp_SpeedfromElevator = -0.1986227880728017
 gains.ki_SpeedfromElevator = -0.0019862278473563194
 
+##### VEHICLE SETUP #####
+Va = 20 # airspeed
+origin = [[10], [25], [-100]] # world origin
+
 vclc = VCLC.VehicleClosedLoopControl() # vehicle PID controller
+vclc.setControlGains(gains) # set the gains in the UAV
+vclc.setVehicleState(States.vehicleState( # initial vehicle state
+    pn=origin[0][0],
+    pe=origin[1][0],
+    pd=[2][0],
+    u=Va
+))
+
+##### SIMULATION ###
+# time step dT
+dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
+totalTime = 240 # total simulation time [s]
+n_steps = int(totalTime / dT) # simulation steps
+t_data = [i*dT for i in range(n_steps)] # time array
+
+
+
+
