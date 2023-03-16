@@ -514,25 +514,25 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         n = 0,
         e = 0,
         d = -100,
-        radius = 100,
+        radius = 50,
         direction = 1,
-        time = 40,
+        time = 100,
     )
     Waypoint2 = WayPoint.WayPoint(
-        n = 100,
+        n = 300,
         e = 0,
-        d = -100,
+        d = -300,
         radius = 100,
         direction = 1,
-        time=10,
+        time=100,
     )
     Waypoint3 = WayPoint.WayPoint(
-        n = 100,
-        e = 100,
-        d = -100,
-        radius = 100,
+        n = 0,
+        e = 300,
+        d = -200,
+        radius = 150,
         direction = 1,
-        time=20,
+        time=100,
     )
     k_orbit = 1
     k_path = .01
@@ -550,7 +550,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
 
 
     dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
-    totalTime = 240
+    totalTime = 400
     breakTime = totalTime / 2
     breakStep = int(breakTime/dT)
     n_steps = int(totalTime/dT)
