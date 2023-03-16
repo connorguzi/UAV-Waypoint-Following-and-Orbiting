@@ -28,7 +28,9 @@ class WaypointManager():
         self.WaypointList = WaypointList
         if self.WaypointList:
             self.CurrentWaypoint = self.WaypointList[0]
-        self.CurrentWaypoint = WayPoint(0,0,0)
+        else:
+            self.CurrentWaypoint = WayPoint(0,0,0)
+            self.WaypointList = [self.CurrentWaypoint]
         self.elapsedOrbit = 0
         self.dT = VPC.dT
         self.chi_inf = math.pi / 2
@@ -120,6 +122,7 @@ class WaypointManager():
                 if i >= len(self.WaypointList):
                     i = 0
                 self.CurrentWaypoint = self.WaypointList[i]
+                print(self.CurrentWaypoint.location)
                 self.WaypointState = WaypointStates.PATH_FOLLOWING
                 self.elapsedOrbit = 0
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
@@ -129,4 +132,4 @@ class WaypointManager():
                 self.elapsedOrbit += self.dT
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
             
-        return height_command, course_command
+        return -height_command, course_command

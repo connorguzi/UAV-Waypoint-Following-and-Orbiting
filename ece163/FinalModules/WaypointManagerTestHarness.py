@@ -509,7 +509,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
 
     # %%
     cur_test = "WaypointManager Test 1: Following set points"
-    origin = [[100], [0], [-100]]
+    origin = [[10], [25], [-100]]
     Waypoint1 = WayPoint.WayPoint(
         n = 0,
         e = 0,
@@ -542,8 +542,8 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
     vclc.setControlGains(gains)
     Va = 20
     vclc.setVehicleState(States.vehicleState(
-        pn=100,
-        pe=0,
+        pn=10,
+        pe=25,
         pd=-100,
         u=Va
     ))
@@ -596,8 +596,9 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
     ax = fig.add_subplot(2,1,1, projection='3d')
     ax.plot3D(x, y, z)
     ax.plot3D(*Waypoint1.location, marker="o", markersize=5, color='r')
-    ax.plot3D(*Waypoint2.location, marker="o", markersize=5, color='r')
-    ax.plot3D(*Waypoint3.location, marker="o", markersize=5, color='r')
+    ax.plot3D(*Waypoint2.location, marker="o", markersize=5, color='y')
+    ax.plot3D(*Waypoint3.location, marker="o", markersize=5, color='k')
+    ax.plot3D(*origin, marker="x", markersize=5, color='g')
     ax.set_title("UAV Position [ENU]")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
