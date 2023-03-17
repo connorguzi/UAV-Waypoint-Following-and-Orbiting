@@ -80,6 +80,20 @@ class WaypointManager():
         mag = math.hypot(difference[0][0], difference[1][0])
         return mm.scalarDivide(mag, difference)
 
+    # def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
+    #     """
+    #     Author: Connor Guzikowski (cguzikow)
+    #     Date: 03.13.2023
+    #     Function to determine whether UAV is in radius of waypoint or not
+    #     @param: state -> current state of UAV
+    #     @param: waypoint -> position of desired waypoint
+    #     @param: radius -> defined radius around the waypoint
+
+    #     """
+    #     p_waypoint = waypoint.location
+    #     position = [[state.pn], [state.pe], [state.pd]]
+    #     return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
+
     def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
         """
         Author: Connor Guzikowski (cguzikow)
@@ -90,8 +104,8 @@ class WaypointManager():
         @param: radius -> defined radius around the waypoint
 
         """
-        p_waypoint = waypoint.location
-        position = [[state.pn], [state.pe], [state.pd]]
+        p_waypoint = [[waypoint.location[0][0]], [waypoint.location[1][0]], [0]]
+        position = [[state.pn], [state.pe], [0]]
         return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
 
     def SetWaypointList(self, waypoints:'list[WayPoint]'):
@@ -140,7 +154,7 @@ class WaypointManager():
                 self.WaypointState = WaypointStates.PATH_FOLLOWING
                 self.elapsedOrbit = 0
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
-                print(f"New origin:{self.origin}\nNew Current{self.currentWaypoint.location}\n")
+                print(f"New origin:{self.origin}\nNew Current{self.CurrentWaypoint.location}\n")
             
             # Increase elapsed time and adjust the commands
             else:

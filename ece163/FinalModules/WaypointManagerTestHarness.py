@@ -535,7 +535,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         time=100,
     )
     k_orbit = 1
-    k_path = .01
+    k_path = 0.01
     WpList = [Waypoint1, Waypoint2, Waypoint3]
     WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
     vclc = VCLC.VehicleClosedLoopControl()
@@ -566,7 +566,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
     y = [0 for i in range(n_steps)]
     z = [0 for i in range(n_steps)]
 
-    q2 = [0 for i in range(n_steps)]
+    q1 = [0 for i in range(n_steps)]
     qhypot = [0 for i in range(n_steps)]
     shypot = [0 for i in range(n_steps)]
 
@@ -602,12 +602,12 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         n = PathFollowing.CalcUnitNormalVector(q=q)
         s = PathFollowing. CalcProjectedRelativeErrorVector(state=vclc.getVehicleState(),n=n,origin=o)
 
-        q2[i] = q[1][0]
+        q1[i] = q[1][0]
         qhypot[i] = math.hypot(q[0][0], q[1][0])
         shypot[i] = math.hypot(s[0][0], s[1][0])
 
-        if (i*dT > 118.7) and (i*dT < 118.8): #Look at 118.75 and 118.76
-            print(f"t:{i*dT}\n\tq:{q}\n\tqhypot:{qhypot[i]}\n\ts:{s}\n\to:{o}")
+        # if (i*dT > 118.7) and (i*dT < 118.8): #Look at 118.75 and 118.76
+        #     print(f"t:{i*dT}\n\tq:{q}\n\tqhypot:{qhypot[i]}\n\ts:{s}\n\to:{o}")
 
     
     # Plots for testing stuff
@@ -618,8 +618,8 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
     ax.legend()
     
     ax = fig.add_subplot(2,3,4)
-    ax.set_title("q2")
-    ax.plot(t_data, q2)
+    ax.set_title("q[1][0]")
+    ax.plot(t_data, q1)
 
     ax = fig.add_subplot(2,3,5)
     ax.set_title("qhypot")
