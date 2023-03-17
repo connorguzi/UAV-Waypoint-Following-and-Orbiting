@@ -509,7 +509,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
 
     # %%
     cur_test = "WaypointManager Test 1: Following set points"
-    origin = [[10], [25], [-100]]
+    origin = [[-100], [-250], [-200]]
     Waypoint1 = WayPoint.WayPoint(
         n = 0,
         e = 0,
@@ -535,16 +535,16 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         time=100,
     )
     k_orbit = 1
-    k_path = .01
+    k_path = 0.01
     WpList = [Waypoint1, Waypoint2, Waypoint3]
     WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
     vclc = VCLC.VehicleClosedLoopControl()
     vclc.setControlGains(gains)
     Va = 20
     vclc.setVehicleState(States.vehicleState(
-        pn=10,
-        pe=25,
-        pd=-100,
+        pn=origin[0][0],
+        pe=origin[1][0],
+        pd=origin[2][0],
         u=Va
     ))
 
@@ -565,6 +565,10 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
     x = [0 for i in range(n_steps)]
     y = [0 for i in range(n_steps)]
     z = [0 for i in range(n_steps)]
+
+    q1 = [0 for i in range(n_steps)]
+    qhypot = [0 for i in range(n_steps)]
+    shypot = [0 for i in range(n_steps)]
 
     for i in range(n_steps):        
         # Update reference commands
@@ -592,6 +596,41 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         y[i] = temp[0][1]
         z[i] = temp[0][2]
 
+        # Calc test values
+        o = WM.origin
+        q  = WM.CalcDirectionVector(WM.origin, WM.CurrentWaypoint.location)
+        n = PathFollowing.CalcUnitNormalVector(q=q)
+        s = PathFollowing. CalcProjectedRelativeErrorVector(state=vclc.getVehicleState(),n=n,origin=o)
+
+        q1[i] = q[1][0]
+        qhypot[i] = math.hypot(q[0][0], q[1][0])
+        shypot[i] = math.hypot(s[0][0], s[1][0])
+
+        # if (i*dT > 118.7) and (i*dT < 118.8): #Look at 118.75 and 118.76
+        #     print(f"t:{i*dT}\n\tq:{q}\n\tqhypot:{qhypot[i]}\n\ts:{s}\n\to:{o}")
+
+    
+    # Plots for testing stuff
+    fig = plt.figure(layout="tight")
+    ax = fig.add_subplot(2,1,1)
+    ax.plot(t_data, h_t, label="True")
+    ax.plot(t_data, h_c, label="Commanded")
+    ax.legend()
+    
+    ax = fig.add_subplot(2,3,4)
+    ax.set_title("q[1][0]")
+    ax.plot(t_data, q1)
+
+    ax = fig.add_subplot(2,3,5)
+    ax.set_title("qhypot")
+    ax.plot(t_data, qhypot)
+
+    ax = fig.add_subplot(2,3,6)
+    ax.set_title("shypot")
+    ax.plot(t_data, shypot)
+    plt.show()
+
+    # Actual plots
     fig = plt.figure(tight_layout =True)
     ax = fig.add_subplot(2,1,1, projection='3d')
     ax.plot3D(x, y, z)

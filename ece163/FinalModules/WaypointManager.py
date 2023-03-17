@@ -39,18 +39,32 @@ class WaypointManager():
         self.k_orbit = k_orbit
         self.origin = origin
 
-    def CalcDirectionVector(self, state: States.vehicleState, waypoint: WayPoint):
+    # def CalcDirectionVector(self, state: States.vehicleState, waypoint: WayPoint):
+    #     """
+    #     Author: Connor Guzikowski (cguzikow)
+    #     Date: 03.13.2023        
+    #     Calculates the unit direction vector from the UAV to the waypoint
+    #     @param: state -> current state of UAV
+    #     @param: waypoint -> position of desired waypoint
+
+    #     """
+    #     p_waypoint = waypoint.location
+    #     position = [[state.pn], [state.pe], [state.pd]]
+    #     difference = mm.subtract(p_waypoint, position)
+    #     mag = mm.mag(difference)
+    #     return mm.scalarDivide(mag, difference)
+
+    def CalcDirectionVector(self, loc1: 'list[list[float]]', loc2: 'list[list[float]]'):
         """
         Author: Connor Guzikowski (cguzikow)
         Date: 03.13.2023        
-        Calculates the unit direction vector from the UAV to the waypoint
+        Modified: Bailen Lawson 03.16.2023
+        Calculates the unit direction vector from loc1 to loc2
         @param: state -> current state of UAV
         @param: waypoint -> position of desired waypoint
 
         """
-        p_waypoint = waypoint.location
-        position = [[state.pn], [state.pe], [state.pd]]
-        difference = mm.subtract(p_waypoint, position)
+        difference = mm.subtract(loc2, loc1)
         mag = mm.mag(difference)
         return mm.scalarDivide(mag, difference)
 
@@ -67,6 +81,20 @@ class WaypointManager():
         mag = math.hypot(difference[0][0], difference[1][0])
         return mm.scalarDivide(mag, difference)
 
+    # def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
+    #     """
+    #     Author: Connor Guzikowski (cguzikow)
+    #     Date: 03.13.2023
+    #     Function to determine whether UAV is in radius of waypoint or not
+    #     @param: state -> current state of UAV
+    #     @param: waypoint -> position of desired waypoint
+    #     @param: radius -> defined radius around the waypoint
+
+    #     """
+    #     p_waypoint = waypoint.location
+    #     position = [[state.pn], [state.pe], [state.pd]]
+    #     return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
+
     def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
         """
         Author: Connor Guzikowski (cguzikow)
@@ -77,8 +105,8 @@ class WaypointManager():
         @param: radius -> defined radius around the waypoint
 
         """
-        p_waypoint = waypoint.location
-        position = [[state.pn], [state.pe], [state.pd]]
+        p_waypoint = [[waypoint.location[0][0]], [waypoint.location[1][0]], [0]]
+        position = [[state.pn], [state.pe], [0]]
         return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
 
     def SetWaypointList(self, waypoints:'list[WayPoint]'):
@@ -102,7 +130,8 @@ class WaypointManager():
         @returns height, course
         """
         # Direction Vector
-        q = self.CalcDirectionVector(state=state, waypoint=self.CurrentWaypoint)
+        # q = self.CalcDirectionVector(state=state, waypoint=self.CurrentWaypoint)
+        q = self.CalcDirectionVector(self.origin, self.CurrentWaypoint.location)
         
         if self.WaypointState == WaypointStates.PATH_FOLLOWING:
             # Check to see if the UAV is in the orbit radius

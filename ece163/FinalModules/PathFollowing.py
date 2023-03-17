@@ -109,7 +109,6 @@ def CalcCommandedHeight(s, origin, q):
     @param: r -> vector form origin to path
     @param: q -> unit vector with path direction
     """
-    
     hd = -origin[2][0] - math.hypot(s[0][0], s[1][0]) * (q[2][0] / math.hypot(q[0][0], q[1][0]))
 
     return hd
