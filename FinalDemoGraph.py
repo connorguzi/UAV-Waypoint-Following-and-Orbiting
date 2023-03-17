@@ -78,10 +78,18 @@ waypoint2 = WayPoint.WayPoint(
     time=100
 )
 waypoint3=WayPoint.WayPoint(
-    n=200,
+    n=50,
     e=25,
     d=-100,
-    radius=150,
+    radius=50,
+    direction=1,
+    time=100
+)
+waypoint4=WayPoint.WayPoint(
+    n=10,
+    e=25,
+    d=-100,
+    radius=50,
     direction=1,
     time=100
 )
@@ -90,7 +98,7 @@ waypoint3=WayPoint.WayPoint(
 k_orbit = 1
 k_path = 0.01 # how fast we transition into the path
 
-WpList = [waypoint1, waypoint2]
+WpList = [waypoint1, waypoint2, waypoint3]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
 ##### VEHICLE SETUP #####
