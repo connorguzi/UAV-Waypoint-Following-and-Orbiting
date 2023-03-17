@@ -512,32 +512,32 @@ def testing_WaypointManager_Graphical_InitOnOrbit(trimControls, trimState, gains
     cur_test = "WaypointManager Test 1: Following set points"
     origin = [[-100], [-250], [-200]]
     Waypoint1 = WayPoint.WayPoint(
-        n=0,
-        e=0,
-        d=-100,
+        n=10,
+        e=200,
+        d=-150,
         radius=50,
         direction=1,
-        time=100,
+        time=100
     )
     Waypoint2 = WayPoint.WayPoint(
-        n=300,
-        e=0,
-        d=-300,
-        radius=100,
-        direction=1,
-        time=100,
-    )
-    Waypoint3 = WayPoint.WayPoint(
-        n=0,
-        e=300,
+        n=200,
+        e=200,
         d=-200,
+        radius=50,
+        direction=1,
+        time=100
+    )
+    Waypoint3=WayPoint.WayPoint(
+        n=50,
+        e=25,
+        d=-100,
         radius=150,
         direction=1,
-        time=100,
+        time=100
     )
     k_orbit = 1
     k_path = 0.01
-    WpList = [Waypoint1, Waypoint2, Waypoint3]
+    WpList = [Waypoint1, Waypoint2]
     WM = WaypointManager.WaypointManager(
         origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
@@ -552,7 +552,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(trimControls, trimState, gains
     vclc.setTrimInputs(trimControls)
 
     dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
-    totalTime = 400
+    totalTime = 500
     breakTime = totalTime / 2
     breakStep = int(breakTime/dT)
     n_steps = int(totalTime/dT)
@@ -586,11 +586,12 @@ def testing_WaypointManager_Graphical_InitOnOrbit(trimControls, trimState, gains
         chi_t[i] = vclc.getVehicleState().chi
         h_t[i] = -vclc.getVehicleState().pd
 
-        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        chi_e[i] = chi_t[i] - chi_c[i]
         while chi_e[i] < -math.pi:
             chi_e[i] += 2*math.pi
         while chi_e[i] > math.pi:
             chi_e[i] -= 2*math.pi
+        chi_e[i] = math.degrees(chi_e[i])
 
         h_e[i] = h_t[i] - h_c[i]
 

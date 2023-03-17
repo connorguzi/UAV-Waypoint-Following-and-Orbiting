@@ -314,6 +314,7 @@ def printErrorMessage_compareObject(failedVals=[], keyName="key", obj1="obj1", o
 
 # Test Orbiting
 
+
 def testing_PathFollowing_Graphical_InitOnPath(gains, printPlots=False):
     print("\nBeginning graphical tests of PathFollowing:")
 
@@ -359,12 +360,12 @@ def testing_PathFollowing_Graphical_InitOnPath(gains, printPlots=False):
     y = [0 for i in range(n_steps)]
     z = [0 for i in range(n_steps)]
 
-    for i in range(n_steps):        
+    for i in range(n_steps):
         # Update reference commands
         h_c[i], chi_c[i] = PathFollowing.getCommandedInputs(
             origin=origin,
             q=q,
-            chi_inf = chi_inf,
+            chi_inf=chi_inf,
             k_path=k_path,
             state=vclc.getVehicleState()
         )
@@ -391,21 +392,21 @@ def testing_PathFollowing_Graphical_InitOnPath(gains, printPlots=False):
         y[i] = temp[0][1]
         z[i] = temp[0][2]
 
-    fig = plt.figure(tight_layout =True)
-    ax = fig.add_subplot(2,1,1, projection='3d')
+    fig = plt.figure(tight_layout=True)
+    ax = fig.add_subplot(2, 1, 1, projection='3d')
     ax.plot3D(x, y, z)
     ax.set_title("UAV Position [ENU]")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
 
-    ax = fig.add_subplot(2,2,3)
+    ax = fig.add_subplot(2, 2, 3)
     ax.plot(t_data, chi_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
     ax.set_ylabel("Course Error [deg]")
 
-    ax = fig.add_subplot(2,2,4)
+    ax = fig.add_subplot(2, 2, 4)
     ax.plot(t_data, h_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
@@ -418,6 +419,7 @@ def testing_PathFollowing_Graphical_InitOnPath(gains, printPlots=False):
         plt.show()
 
     evaluateTest(cur_test, True)
+
 
 def testing_PathFollowing_Graphical_InitOffPath(gains, printPlots=False):
     print("\nBeginning graphical tests of PathFollowing:")
@@ -464,12 +466,12 @@ def testing_PathFollowing_Graphical_InitOffPath(gains, printPlots=False):
     y = [0 for i in range(n_steps)]
     z = [0 for i in range(n_steps)]
 
-    for i in range(n_steps):        
+    for i in range(n_steps):
         # Update reference commands
         h_c[i], chi_c[i] = PathFollowing.getCommandedInputs(
             origin=origin,
             q=q,
-            chi_inf = chi_inf,
+            chi_inf=chi_inf,
             k_path=k_path,
             state=vclc.getVehicleState()
         )
@@ -496,21 +498,21 @@ def testing_PathFollowing_Graphical_InitOffPath(gains, printPlots=False):
         y[i] = temp[0][1]
         z[i] = temp[0][2]
 
-    fig = plt.figure(tight_layout =True)
-    ax = fig.add_subplot(2,1,1, projection='3d')
+    fig = plt.figure(tight_layout=True)
+    ax = fig.add_subplot(2, 1, 1, projection='3d')
     ax.plot3D(x, y, z)
     ax.set_title("UAV Position [ENU]")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
 
-    ax = fig.add_subplot(2,2,3)
+    ax = fig.add_subplot(2, 2, 3)
     ax.plot(t_data, chi_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
     ax.set_ylabel("Course Error [deg]")
 
-    ax = fig.add_subplot(2,2,4)
+    ax = fig.add_subplot(2, 2, 4)
     ax.plot(t_data, h_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
@@ -524,21 +526,13 @@ def testing_PathFollowing_Graphical_InitOffPath(gains, printPlots=False):
 
     evaluateTest(cur_test, True)
 
-def testing_PathFollowing_Graphical_PathChange(gains, printPlots=False):
+
+def testing_PathFollowing_Graphical_PathChange(trimControls, trimState, gains, printPlots=False):
     print("\nBeginning graphical tests of PathFollowing:")
 
     # %%
     cur_test = "PathFollowing Graphical Test: Initial point off path"
 
-    vclc = VCLC.VehicleClosedLoopControl()
-    vclc.setControlGains(gains)
-    Va = 20
-    vclc.setVehicleState(States.vehicleState(
-        pn=0,
-        pe=0,
-        pd=-200,
-        u=Va
-    ))
     origin1 = [
         [0],
         [0],
@@ -559,11 +553,21 @@ def testing_PathFollowing_Graphical_PathChange(gains, printPlots=False):
         [1/math.sqrt(2)],
         [0]
     ]
+    chi_inf = math.radians(90)
+    k_path = 0.1
 
     origin = origin1
     q = q1
-    chi_inf = math.radians(90)
-    k_path = 0.1
+
+    vclc = VCLC.VehicleClosedLoopControl()
+    tempState = trimState
+    tempState.pn = origin[0][0]
+    tempState.pe = origin[1][0]
+    tempState.pd = origin[2][0]
+    Va = trimState.Va
+    vclc.setVehicleState(tempState)
+    vclc.setControlGains(gains)
+    vclc.setTrimInputs(trimControls)
 
     dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
     totalTime = 150
@@ -592,7 +596,7 @@ def testing_PathFollowing_Graphical_PathChange(gains, printPlots=False):
         h_c[i], chi_c[i] = PathFollowing.getCommandedInputs(
             origin=origin,
             q=q,
-            chi_inf = chi_inf,
+            chi_inf=chi_inf,
             k_path=k_path,
             state=vclc.getVehicleState()
         )
@@ -607,15 +611,21 @@ def testing_PathFollowing_Graphical_PathChange(gains, printPlots=False):
         chi_t[i] = vclc.getVehicleState().chi
         h_t[i] = -vclc.getVehicleState().pd
 
-        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        chi_e[i] = chi_t[i] - chi_c[i]
+        while chi_e[i] < -math.pi:
+            chi_e[i] += 2*math.pi
+        while chi_e[i] > math.pi:
+            chi_e[i] -= 2*math.pi
+        chi_e[i] = math.degrees(chi_e[i])
+
         h_e[i] = h_t[i] - h_c[i]
 
         x[i] = vclc.getVehicleState().pn
         y[i] = vclc.getVehicleState().pe
         z[i] = -vclc.getVehicleState().pd
 
-    fig = plt.figure(tight_layout =True)
-    ax = fig.add_subplot(2,1,1, projection='3d')
+    fig = plt.figure(tight_layout=True)
+    ax = fig.add_subplot(2, 1, 1, projection='3d')
     ax.plot3D(x, y, z)
     ax.plot3D(
         [origin1[0][0], origin1[0][0] + q1[0][0]*1000],
@@ -634,13 +644,13 @@ def testing_PathFollowing_Graphical_PathChange(gains, printPlots=False):
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
 
-    ax = fig.add_subplot(2,2,3)
+    ax = fig.add_subplot(2, 2, 3)
     ax.plot(t_data, chi_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
     ax.set_ylabel("Course Error [deg]")
 
-    ax = fig.add_subplot(2,2,4)
+    ax = fig.add_subplot(2, 2, 4)
     ax.plot(t_data, h_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
@@ -654,6 +664,7 @@ def testing_PathFollowing_Graphical_PathChange(gains, printPlots=False):
         plt.show()
 
     evaluateTest(cur_test, True)
+
 
 # %% Start Message
 print(f"\n\nRunning {os.path.basename(__file__)}:")
@@ -675,7 +686,7 @@ else:
     print("Model converged outside of valid inputs, change parameters and try again")
 
 # Get gains
-tuningParameters=Controls.controlTuning(
+tuningParameters = Controls.controlTuning(
     Wn_roll=20.61778493279331, Zeta_roll=2.7641222974190165,
     Wn_course=0.1313209195267308, Zeta_course=2.818882757405783,
     Wn_sideslip=0.03880705477100873, Zeta_sideslip=11.260307631650688,
@@ -700,7 +711,8 @@ for key, val in vars(gains).items():
 printPlot = False
 # testing_PathFollowing_Graphical_InitOnPath(gains, printPlot)
 # testing_PathFollowing_Graphical_InitOffPath(gains, printPlot)
-testing_PathFollowing_Graphical_PathChange(gains, printPlot)
+testing_PathFollowing_Graphical_PathChange(trimControls=vTrim.getTrimControls(
+), trimState=vTrim.getTrimState(), gains=gains, printPlots=printPlot)
 
 # %% Print results:
 
