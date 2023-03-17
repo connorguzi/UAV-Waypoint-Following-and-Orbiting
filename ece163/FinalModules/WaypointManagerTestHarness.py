@@ -586,11 +586,12 @@ def testing_WaypointManager_Graphical_InitOnOrbit(trimControls, trimState, gains
         chi_t[i] = vclc.getVehicleState().chi
         h_t[i] = -vclc.getVehicleState().pd
 
-        chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        chi_e[i] = chi_t[i] - chi_c[i]
         while chi_e[i] < -math.pi:
             chi_e[i] += 2*math.pi
         while chi_e[i] > math.pi:
             chi_e[i] -= 2*math.pi
+        chi_e[i] = math.degrees(chi_e[i])
 
         h_e[i] = h_t[i] - h_c[i]
 
