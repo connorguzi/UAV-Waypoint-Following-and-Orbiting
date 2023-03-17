@@ -937,17 +937,18 @@ def testing_Orbiting_Graphical_InitOutOrbit(gains, printPlots=False):
     evaluateTest(cur_test, True)
 
 
-def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
+def testing_Orbiting_Graphical_ChangeOrbit(trimControls, trimState, gains, printPlots=False):
     # %%
     cur_test = "Orbiting.getCommandedInputs Test 4: Change Orbit"
 
     vclc = VCLC.VehicleClosedLoopControl()
     vclc.setControlGains(gains)
-    vclc.setVehicleState(States.vehicleState(
-        pn=200,
-        pe=0,
-        pd=-100
-    ))
+    vclc.setTrimInputs(trimControls)
+    tempState = trimState
+    tempState.pn = 200
+    tempState.pe = 0
+    tempState.pd = -100
+    vclc.setVehicleState(tempState)
     waypoint1 = WayPoint.WayPoint(
         n = 0,
         e = 0,
@@ -1003,6 +1004,10 @@ def testing_Orbiting_Graphical_ChangeOrbit(gains, printPlots=False):
         h_t[i] = -vclc.getVehicleState().pd
 
         chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        while chi_e[i] < -math.pi:
+            chi_e[i] += 2*math.pi
+        while chi_e[i] > math.pi:
+            chi_e[i] -= 2*math.pi
         h_e[i] = h_t[i] - h_c[i]
         
         x[i] = vclc.getVehicleState().pn
@@ -1110,7 +1115,7 @@ printPlot = False
 # testing_Orbiting_Graphical_InitOnOrbit(gains, printPlot)
 # testing_Orbiting_Graphical_InitInOrbit(gains, printPlot)
 # testing_Orbiting_Graphical_InitOutOrbit(gains, printPlot)
-testing_Orbiting_Graphical_ChangeOrbit(gains, printPlot)
+testing_Orbiting_Graphical_ChangeOrbit(trimState=vTrim.getTrimState(), trimControls=vTrim.getTrimControls(), gains=gains, printPlots=printPlot)
 
 # %% Print results:
 
