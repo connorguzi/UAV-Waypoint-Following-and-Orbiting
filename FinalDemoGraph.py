@@ -81,16 +81,24 @@ waypoint3=WayPoint.WayPoint(
     n=50,
     e=25,
     d=-100,
-    radius=150,
+    radius=50,
+    direction=1,
+    time=100
+)
+waypoint4=WayPoint.WayPoint(
+    n=10,
+    e=25,
+    d=-100,
+    radius=50,
     direction=1,
     time=100
 )
 
 # orbit and path following gains
 k_orbit = 1
-k_path = 0.01 # how fast we transition into the path
+k_path = 0.05 # how fast we transition into the path
 
-WpList = [waypoint1, waypoint2]
+WpList = [waypoint1, waypoint2, waypoint3]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
 ##### VEHICLE SETUP #####
@@ -148,7 +156,13 @@ for i in range(n_steps):
     height_true[i] = -vclc.getVehicleState().pd # measure the height
 
     # measure the error
-    chi_error[i] = math.degrees(chi_true[i] - chi_commanded[i])
+    chi_error[i] = chi_true[i] - chi_commanded[i]
+    while(chi_error[i] < math.pi):
+        chi_error[i] += 2*math.pi
+    while(chi_error[i] > math.pi):
+        chi_error[i] -= 2*math.pi
+
+    chi_error[i] = math.degrees(chi_error[i])
     height_error[i] = height_true[i] - height_commanded[i]
 
     # convert to enu coordinates
