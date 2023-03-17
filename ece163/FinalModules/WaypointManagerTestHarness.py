@@ -424,11 +424,11 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
         u=Va
     ))
     testWaypoint = WayPoint.WayPoint(
-        n = 0,
-        e = 0,
-        d = -100,
-        radius = 100,
-        direction = 1,
+        n=0,
+        e=0,
+        d=-100,
+        radius=100,
+        direction=1,
     )
     k_orbit = 1
 
@@ -449,7 +449,7 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
     y = [0 for i in range(n_steps)]
     z = [0 for i in range(n_steps)]
 
-    for i in range(n_steps):        
+    for i in range(n_steps):
         # Update reference commands
         h_c[i], chi_c[i] = Orbiting.getCommandedInputs(
             vclc.getVehicleState(), testWaypoint, k_orbit)
@@ -476,21 +476,21 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
         y[i] = temp[0][1]
         z[i] = temp[0][2]
 
-    fig = plt.figure(tight_layout =True)
-    ax = fig.add_subplot(2,1,1, projection='3d')
+    fig = plt.figure(tight_layout=True)
+    ax = fig.add_subplot(2, 1, 1, projection='3d')
     ax.plot3D(x, y, z)
     ax.set_title("UAV Position [ENU]")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
 
-    ax = fig.add_subplot(2,2,3)
+    ax = fig.add_subplot(2, 2, 3)
     ax.plot(t_data, chi_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
     ax.set_ylabel("Course Error [deg]")
 
-    ax = fig.add_subplot(2,2,4)
+    ax = fig.add_subplot(2, 2, 4)
     ax.plot(t_data, h_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
@@ -504,50 +504,52 @@ def testing_Orbiting_Graphical_InitOnOrbit(gains, printPlots=False):
 
     evaluateTest(cur_test, True)
 
-def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
+
+def testing_WaypointManager_Graphical_InitOnOrbit(trimControls, trimState, gains, printPlots=False):
     print("\nBeginning graphical tests of Waypoint Manager:")
 
     # %%
     cur_test = "WaypointManager Test 1: Following set points"
     origin = [[-100], [-250], [-200]]
     Waypoint1 = WayPoint.WayPoint(
-        n = 0,
-        e = 0,
-        d = -100,
-        radius = 50,
-        direction = 1,
-        time = 100,
+        n=0,
+        e=0,
+        d=-100,
+        radius=50,
+        direction=1,
+        time=100,
     )
     Waypoint2 = WayPoint.WayPoint(
-        n = 300,
-        e = 0,
-        d = -300,
-        radius = 100,
-        direction = 1,
+        n=300,
+        e=0,
+        d=-300,
+        radius=100,
+        direction=1,
         time=100,
     )
     Waypoint3 = WayPoint.WayPoint(
-        n = 0,
-        e = 300,
-        d = -200,
-        radius = 150,
-        direction = 1,
+        n=0,
+        e=300,
+        d=-200,
+        radius=150,
+        direction=1,
         time=100,
     )
     k_orbit = 1
     k_path = 0.01
     WpList = [Waypoint1, Waypoint2, Waypoint3]
-    WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
-    vclc = VCLC.VehicleClosedLoopControl()
-    vclc.setControlGains(gains)
-    Va = 20
-    vclc.setVehicleState(States.vehicleState(
-        pn=origin[0][0],
-        pe=origin[1][0],
-        pd=origin[2][0],
-        u=Va
-    ))
+    WM = WaypointManager.WaypointManager(
+        origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
+    vclc = VCLC.VehicleClosedLoopControl()
+    tempState = trimState
+    tempState.pn = origin[0][0]
+    tempState.pe = origin[1][0]
+    tempState.pd = origin[2][0]
+    Va = trimState.Va
+    vclc.setVehicleState(tempState)
+    vclc.setControlGains(gains)
+    vclc.setTrimInputs(trimControls)
 
     dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
     totalTime = 400
@@ -570,7 +572,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
     qhypot = [0 for i in range(n_steps)]
     shypot = [0 for i in range(n_steps)]
 
-    for i in range(n_steps):        
+    for i in range(n_steps):
         # Update reference commands
         h_c[i], chi_c[i] = WM.Update(state=vclc.getVehicleState())
         controls = Controls.referenceCommands(
@@ -585,6 +587,11 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         h_t[i] = -vclc.getVehicleState().pd
 
         chi_e[i] = math.degrees(chi_t[i] - chi_c[i])
+        while chi_e[i] < -math.pi:
+            chi_e[i] += 2*math.pi
+        while chi_e[i] > math.pi:
+            chi_e[i] -= 2*math.pi
+
         h_e[i] = h_t[i] - h_c[i]
 
         temp = Rotations.ned2enu([[
@@ -598,9 +605,10 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
 
         # Calc test values
         o = WM.origin
-        q  = WM.CalcDirectionVector(WM.origin, WM.CurrentWaypoint.location)
+        q = WM.CalcDirectionVector(WM.origin, WM.CurrentWaypoint.location)
         n = PathFollowing.CalcUnitNormalVector(q=q)
-        s = PathFollowing. CalcProjectedRelativeErrorVector(state=vclc.getVehicleState(),n=n,origin=o)
+        s = PathFollowing. CalcProjectedRelativeErrorVector(
+            state=vclc.getVehicleState(), n=n, origin=o)
 
         q1[i] = q[1][0]
         qhypot[i] = math.hypot(q[0][0], q[1][0])
@@ -609,51 +617,57 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         # if (i*dT > 118.7) and (i*dT < 118.8): #Look at 118.75 and 118.76
         #     print(f"t:{i*dT}\n\tq:{q}\n\tqhypot:{qhypot[i]}\n\ts:{s}\n\to:{o}")
 
-    
     # Plots for testing stuff
     fig = plt.figure(layout="tight")
-    ax = fig.add_subplot(2,1,1)
+    ax = fig.add_subplot(2, 1, 1)
     ax.plot(t_data, h_t, label="True")
     ax.plot(t_data, h_c, label="Commanded")
     ax.legend()
-    
-    ax = fig.add_subplot(2,3,4)
+
+    ax = fig.add_subplot(2, 3, 4)
     ax.set_title("q[1][0]")
     ax.plot(t_data, q1)
 
-    ax = fig.add_subplot(2,3,5)
+    ax = fig.add_subplot(2, 3, 5)
     ax.set_title("qhypot")
     ax.plot(t_data, qhypot)
 
-    ax = fig.add_subplot(2,3,6)
+    ax = fig.add_subplot(2, 3, 6)
     ax.set_title("shypot")
     ax.plot(t_data, shypot)
     plt.show()
 
     # Actual plots
-    fig = plt.figure(tight_layout =True)
-    ax = fig.add_subplot(2,1,1, projection='3d')
+    fig = plt.figure(tight_layout=True)
+    ax = fig.add_subplot(2, 1, 1, projection='3d')
     ax.plot3D(x, y, z)
-    wp1 = Rotations.ned2enu([[Waypoint1.location[0][0], Waypoint1.location[1][0], Waypoint1.location[2][0]]])
-    wp2 = Rotations.ned2enu([[Waypoint2.location[0][0], Waypoint2.location[1][0], Waypoint2.location[2][0]]])
-    wp3 = Rotations.ned2enu([[Waypoint3.location[0][0], Waypoint3.location[1][0], Waypoint3.location[2][0]]])
+    wp1 = Rotations.ned2enu(
+        [[Waypoint1.location[0][0], Waypoint1.location[1][0], Waypoint1.location[2][0]]])
+    wp2 = Rotations.ned2enu(
+        [[Waypoint2.location[0][0], Waypoint2.location[1][0], Waypoint2.location[2][0]]])
+    wp3 = Rotations.ned2enu(
+        [[Waypoint3.location[0][0], Waypoint3.location[1][0], Waypoint3.location[2][0]]])
     ogn = Rotations.ned2enu([[origin[0][0], origin[1][0], origin[2][0]]])
-    ax.plot3D(wp1[0][0], wp1[0][1], wp1[0][2], marker="o", markersize=5, color='r')
-    ax.plot3D(wp2[0][0], wp2[0][1], wp2[0][2],  marker="o", markersize=5, color='y')
-    ax.plot3D(wp3[0][0], wp3[0][1], wp3[0][2],  marker="o", markersize=5, color='k')
-    ax.plot3D(ogn[0][0], ogn[0][1], ogn[0][2], marker="x", markersize=5, color='g')
+    ax.plot3D(wp1[0][0], wp1[0][1], wp1[0][2],
+              marker="o", markersize=5, color='r')
+    ax.plot3D(wp2[0][0], wp2[0][1], wp2[0][2],
+              marker="o", markersize=5, color='y')
+    ax.plot3D(wp3[0][0], wp3[0][1], wp3[0][2],
+              marker="o", markersize=5, color='k')
+    ax.plot3D(ogn[0][0], ogn[0][1], ogn[0][2],
+              marker="x", markersize=5, color='g')
     ax.set_title("UAV Position [ENU]")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
 
-    ax = fig.add_subplot(2,2,3)
+    ax = fig.add_subplot(2, 2, 3)
     ax.plot(t_data, chi_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
     ax.set_ylabel("Course Error [deg]")
 
-    ax = fig.add_subplot(2,2,4)
+    ax = fig.add_subplot(2, 2, 4)
     ax.plot(t_data, h_e)
     ax.set_title(" ")
     ax.set_xlabel("t [s]")
@@ -666,6 +680,7 @@ def testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlots=False):
         plt.show()
 
     evaluateTest(cur_test, True)
+
 
 # %% Start Message
 print(f"\n\nRunning {os.path.basename(__file__)}:")
@@ -691,7 +706,7 @@ else:
     print("Model converged outside of valid inputs, change parameters and try again")
 
 # Get gains
-tuningParameters=Controls.controlTuning(
+tuningParameters = Controls.controlTuning(
     Wn_roll=20.61778493279331, Zeta_roll=2.7641222974190165,
     Wn_course=0.1313209195267308, Zeta_course=2.818882757405783,
     Wn_sideslip=0.03880705477100873, Zeta_sideslip=11.260307631650688,
@@ -716,7 +731,8 @@ for key, val in vars(gains).items():
 printPlot = False
 # testing_Orbiting_Graphical_InitOnOrbit(gains, printPlot)
 
-testing_WaypointManager_Graphical_InitOnOrbit(gains, printPlot)
+testing_WaypointManager_Graphical_InitOnOrbit(trimState=vTrim.getTrimState(
+), trimControls=vTrim.getTrimControls(), gains=gains, printPlots=printPlot)
 # %% Print results:
 
 total = len(passed) + len(failed)
