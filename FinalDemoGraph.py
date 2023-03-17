@@ -37,6 +37,7 @@ import ece163.Constants.VehiclePhysicalConstants as VPC
 import ece163.Constants.VehicleSensorConstants as VSC
 
 import ece163.FinalModules.WayPoint as WayPoint
+import ece163.FinalModules.WaypointManager as WaypointManager
 
 ##### GAINS #####
 gains = Controls.controlGains() # UAV gains object
@@ -57,14 +58,42 @@ gains.kp_SpeedfromElevator = -0.1986227880728017
 gains.ki_SpeedfromElevator = -0.0019862278473563194
 
 ##### WAYPOINT MANAGER #####
-point1 = WayPoint.WayPoint(
-    n=100,
-    
+origin = [[10], [25], [-100]] # world origin
+
+waypoint1 = WayPoint.WayPoint(
+    n=0,
+    e=0,
+    d=-100,
+    radius=50,
+    direction=1,
+    time=100
 )
+waypoint2 = WayPoint.WayPoint(
+    n=300,
+    e=0,
+    d=-300,
+    radius=100,
+    direction=-1,
+    time=50
+)
+waypoint3=WayPoint.WayPoint(
+    n=0,
+    e=300,
+    d=-200,
+    radius=150,
+    direction=1,
+    time=150
+)
+
+# orbit and path following gains
+k_orbit = 1
+k_path = 0.01 # how fast we transition into the path
+
+WpList = [waypoint1, waypoint2, waypoint3]
+WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
 ##### VEHICLE SETUP #####
 Va = 20 # airspeed
-origin = [[10], [25], [-100]] # world origin
 
 vclc = VCLC.VehicleClosedLoopControl() # vehicle PID controller
 vclc.setControlGains(gains) # set the gains in the UAV
@@ -75,7 +104,7 @@ vclc.setVehicleState(States.vehicleState( # initial vehicle state
     u=Va
 ))
 
-##### SIMULATION ###
+##### SIMULATION SETUP ###
 # time step dT
 dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
 totalTime = 240 # total simulation time [s]
@@ -93,6 +122,19 @@ height_error = [0 for i in range(n_steps)] # height error
 n = [0 for i in range(n_steps)] # north coordinate
 e = [0 for i in range(n_steps)] # east coordinate
 d = [0 for i in range(n_steps)] # down coordinate
+
+##### SIMULATE #####
+for i in range(n_steps):
+    # Update the reference commands
+    height_commanded[i], chi_commanded[i] = WM.Update(state=vclc.getVehicleState())
+    controls = Controls.referenceCommands(
+        courseCommand = chi_commanded[i],
+        altitudeCommand=height_commanded[i],
+        airspeedCommand=Va
+    )
+
+    # udpate the UAV state
+
 
 
 
