@@ -24,7 +24,7 @@ class WaypointStates(enum.Enum):
 
 
 class WaypointManager():
-    def __init__(self, WaypointList=None, k_path = 0.05, k_orbit = 0.05, origin = [[0], [0], [0]]) -> None:
+    def __init__(self, WaypointList=None, k_path = 0.05, k_orbit = 0.05, origin = [[0], [0], [0]], dt=None) -> None:
         self.WaypointState = WaypointStates.PATH_FOLLOWING
         self.WaypointList = WaypointList
         if self.WaypointList:
@@ -33,7 +33,10 @@ class WaypointManager():
             self.CurrentWaypoint = WayPoint(0,0,0)
             self.WaypointList = [self.CurrentWaypoint]
         self.elapsedOrbit = 0
-        self.dT = VPC.dT
+        if(dt is None):
+            self.dT = VPC.dT
+        else:
+            self.dT = dt
         self.chi_inf = math.pi / 2
         self.k_path = k_path
         self.k_orbit = k_orbit
