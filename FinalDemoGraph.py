@@ -106,12 +106,12 @@ Kappastar = 0.0
 trim.computeTrim(Vastar=Vastar, Gammastar=Gammastar, Kappastar=Kappastar)
 
 vclc.setControlGains(gains) # set the gains in the UAV
-vclc.setTrimInputs(trim)
-vclc.setVehicleState(States.vehicleState( # initial vehicle state
-    pn=origin[0][0],
-    pe=origin[1][0],
-    pd=origin[2][0],
-))
+vclc.setTrimInputs(trim.getTrimControls())
+vState = trim.getTrimState()
+vState.pn = origin[0][0]
+vState.pe = origin[1][0]
+vState.pd = origin[2][0]
+vclc.setVehicleState(vState)
 
 ##### SIMULATION SETUP ###
 # time step dT
