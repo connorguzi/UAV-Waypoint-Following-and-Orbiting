@@ -61,27 +61,26 @@ gains.ki_SpeedfromElevator = -0.0019862278473563194
 
 ##### WAYPOINT MANAGER #####
 origin = [[10], [25], [-100]] # world origin
-
 waypoint1 = WayPoint.WayPoint(
-    n=0,
-    e=0,
-    d=-100,
-    radius=100,
+    n=10,
+    e=200,
+    d=-150,
+    radius=50,
     direction=1,
     time=100
 )
 waypoint2 = WayPoint.WayPoint(
-    n=300,
-    e=0,
-    d=-300,
-    radius=100,
+    n=200,
+    e=200,
+    d=-200,
+    radius=50,
     direction=1,
     time=100
 )
 waypoint3=WayPoint.WayPoint(
-    n=0,
-    e=300,
-    d=-200,
+    n=50,
+    e=25,
+    d=-100,
     radius=150,
     direction=1,
     time=100
@@ -91,7 +90,7 @@ waypoint3=WayPoint.WayPoint(
 k_orbit = 1
 k_path = 0.01 # how fast we transition into the path
 
-WpList = [waypoint1, waypoint2, waypoint3]
+WpList = [waypoint1, waypoint2]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
 ##### VEHICLE SETUP #####
@@ -103,14 +102,14 @@ vclc.setTrimInputs() # calculate the trim inputs
 vclc.setVehicleState(States.vehicleState( # initial vehicle state
     pn=origin[0][0],
     pe=origin[1][0],
-    pd=[2][0],
+    pd=origin[2][0],
     u=Va
 ))
 
 ##### SIMULATION SETUP ###
 # time step dT
 dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
-totalTime = 240 # total simulation time [s]
+totalTime = 500 # total simulation time [s]
 n_steps = int(totalTime / dT) # simulation steps
 t_data = [i*dT for i in range(n_steps)] # time array
 
