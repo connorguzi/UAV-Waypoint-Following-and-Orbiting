@@ -94,16 +94,23 @@ WpList = [waypoint1, waypoint2]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
 ##### VEHICLE SETUP #####
-Va = 20 # airspeed
+Va = 25.0 # airspeed
 
 vclc = VCLC.VehicleClosedLoopControl() # vehicle PID controller
+
+# TRIM
+trim = VehicleTrim.VehicleTrim()
+Vastar = 25.0
+Gammastar = 0.0
+Kappastar = 0.0
+trim.computeTrim(Vastar=Vastar, Gammastar=Gammastar, Kappastar=Kappastar)
+
 vclc.setControlGains(gains) # set the gains in the UAV
-vclc.setTrimInputs() # calculate the trim inputs
+vclc.setTrimInputs(trim)
 vclc.setVehicleState(States.vehicleState( # initial vehicle state
     pn=origin[0][0],
     pe=origin[1][0],
     pd=origin[2][0],
-    u=Va
 ))
 
 ##### SIMULATION SETUP ###
