@@ -65,40 +65,40 @@ waypoint1 = WayPoint.WayPoint(
     n=10,
     e=200,
     d=-150,
-    radius=50,
+    radius=75,
     direction=1,
-    time=100
+    time=25
 )
 waypoint2 = WayPoint.WayPoint(
     n=200,
     e=200,
     d=-200,
-    radius=50,
-    direction=1,
-    time=100
+    radius=150,
+    direction=-1,
+    time=75
 )
 waypoint3=WayPoint.WayPoint(
-    n=50,
-    e=25,
-    d=-100,
+    n=200,
+    e=10,
+    d=-125,
     radius=50,
     direction=1,
-    time=100
+    time=50
 )
 waypoint4=WayPoint.WayPoint(
     n=10,
     e=25,
     d=-100,
-    radius=50,
-    direction=1,
-    time=100
+    radius=100,
+    direction=-1,
+    time=75
 )
 
 # orbit and path following gains
 k_orbit = 1
 k_path = 0.05 # how fast we transition into the path
 
-WpList = [waypoint1, waypoint2, waypoint3]
+WpList = [waypoint1, waypoint2, waypoint3, waypoint4]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
 ##### VEHICLE SETUP #####
@@ -184,10 +184,13 @@ ax.plot3D(n, e, u)
 wp1 = Rotations.ned2enu([[waypoint1.location[0][0], waypoint1.location[1][0], waypoint1.location[2][0]]])
 wp2 = Rotations.ned2enu([[waypoint2.location[0][0], waypoint2.location[1][0], waypoint2.location[2][0]]])
 wp3 = Rotations.ned2enu([[waypoint3.location[0][0], waypoint3.location[1][0], waypoint3.location[2][0]]])
+wp4 = Rotations.ned2enu([[waypoint4.location[0][0], waypoint4.location[1][0], waypoint4.location[2][0]]])
 ogn = Rotations.ned2enu([[origin[0][0], origin[1][0], origin[2][0]]])
+
 ax.plot3D(wp1[0][0], wp1[0][1], wp1[0][2], marker="o", markersize=5, color='r')
 ax.plot3D(wp2[0][0], wp2[0][1], wp2[0][2],  marker="o", markersize=5, color='y')
 ax.plot3D(wp3[0][0], wp3[0][1], wp3[0][2],  marker="o", markersize=5, color='k')
+ax.plot3D(wp4[0][0], wp4[0][1], wp4[0][2],  marker="o", markersize=5, color='c')
 ax.plot3D(ogn[0][0], ogn[0][1], ogn[0][2], marker="x", markersize=5, color='g')
 ax.set_title("UAV Position [ENU]")
 ax.set_xlabel("N [m]")
