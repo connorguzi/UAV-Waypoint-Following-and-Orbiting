@@ -179,7 +179,7 @@ for i in range(n_steps):
 
 ##### PLOTTING #####
 fig = plt.figure(tight_layout =True)
-ax = fig.add_subplot(2,1,1, projection='3d')
+ax = fig.add_subplot(1,2,1, projection='3d')
 ax.plot3D(n, e, u)
 wp1 = Rotations.ned2enu([[waypoint1.location[0][0], waypoint1.location[1][0], waypoint1.location[2][0]]])
 wp2 = Rotations.ned2enu([[waypoint2.location[0][0], waypoint2.location[1][0], waypoint2.location[2][0]]])
@@ -197,7 +197,7 @@ ax.set_xlabel("N [m]")
 ax.set_ylabel("E [m]")
 ax.set_zlabel("U [m]")
 
-ax = fig.add_subplot(2,2,3)
+ax = fig.add_subplot(2,2,2)
 ax.plot(t_data, chi_error)
 ax.set_title(" ")
 ax.set_xlabel("t [s]")
