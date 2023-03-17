@@ -1,4 +1,16 @@
 Traceback (most recent call last):
-  File "C:\Python38\lib\site-packages\pyqtgraph\__init__.py", line 299, in cleanup
-    def cleanup():
-KeyboardInterrupt
+  File "FinalDemoSim.py", line 263, in <module>
+    ourWindow = FinalDemo()
+  File "FinalDemoSim.py", line 73, in __init__
+    self.referenceControl = WaypointControl(state=self.getVehicleState())
+  File "C:\Users\conno\Documents\ECE163\bezierloiterandorbit\ece163\Display\WaypointControl.py", line 71, in __init__
+    self.buildCurrentReferences(state=state)
+  File "C:\Users\conno\Documents\ECE163\bezierloiterandorbit\ece163\Display\WaypointControl.py", line 81, in buildCurrentReferences
+    altitudeCommand, courseCommand = self.WM.Update(state)
+  File "C:\Users\conno\Documents\ECE163\bezierloiterandorbit\ece163\FinalModules\WaypointManager.py", line 137, in Update
+    q = self.CalcDirectionVector(self.origin, self.CurrentWaypoint.location)
+  File "C:\Users\conno\Documents\ECE163\bezierloiterandorbit\ece163\FinalModules\WaypointManager.py", line 72, in CalcDirectionVector
+    return mm.scalarDivide(mag, difference)
+  File "C:\Users\conno\Documents\ECE163\bezierloiterandorbit\ece163\Utilities\MatrixMath.py", line 74, in scalarDivide
+    raise ArithmeticError('Cannot divide by zero')
+ArithmeticError: Cannot divide by zero

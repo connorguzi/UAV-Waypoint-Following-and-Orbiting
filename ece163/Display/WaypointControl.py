@@ -4,38 +4,38 @@ widget which handles the creation of linear models and determining the gains
 
 import PyQt5.QtWidgets as QtWidgets
 from .SliderWithValue import SliderWithValue
-from ..Constants import VehiclePhysicalConstants
+from ..Constants import VehiclePhysicalConstants as VPC
 from ..Containers.Controls import referenceCommands
 from ..Containers.States import vehicleState
 import math
 from ..FinalModules.WaypointManager import WaypointManager
 import ece163.FinalModules.WayPoint as WayPoint
 # Airspeed, Altitude, Course
-origin = [[10], [25], [-100]] # world origin
+origin = [[VPC.InitialNorthPosition], [VPC.InitialEastPosition], [VPC.InitialDownPosition]] # world origin
 
 waypoint1 = WayPoint.WayPoint(
-    n=0,
-    e=0,
-    d=-100,
-    radius=100,
-    direction=1,
-    time=100
-)
-waypoint2 = WayPoint.WayPoint(
     n=300,
     e=0,
-    d=-300,
-    radius=100,
+    d=-100,
+    radius=50,
     direction=1,
-    time=100
+    time=800
+)
+waypoint2 = WayPoint.WayPoint(
+    n=500,
+    e=200,
+    d=-250,
+    radius=50,
+    direction=1,
+    time=800
 )
 waypoint3=WayPoint.WayPoint(
-    n=0,
-    e=300,
-    d=-200,
-    radius=150,
+    n=3,
+    e=600,
+    d=-350,
+    radius=50,
     direction=1,
-    time=100
+    time=800
 )
 
 # orbit and path following gains
@@ -79,8 +79,7 @@ class WaypointControl(QtWidgets.QWidget):
     def buildCurrentReferences(self, state:vehicleState):
         try:
             altitudeCommand, courseCommand = self.WM.Update(state)
-            print(self.WM.CurrentWaypoint.location)
-            airspeedCommand = self.airSpeedInput
+            airspeedCommand = self.airspeed
             self.currentReference = referenceCommands(
                 courseCommand, altitudeCommand, airspeedCommand)
         except AttributeError:  # this stops weird loading bug due to referencing it before it exists
