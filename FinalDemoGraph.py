@@ -96,7 +96,7 @@ waypoint4=WayPoint.WayPoint(
 
 # orbit and path following gains
 k_orbit = 1
-k_path = 0.01 # how fast we transition into the path
+k_path = 0.05 # how fast we transition into the path
 
 WpList = [waypoint1, waypoint2, waypoint3]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
