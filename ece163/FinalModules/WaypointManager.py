@@ -154,7 +154,6 @@ class WaypointManager():
                 self.WaypointState = WaypointStates.PATH_FOLLOWING
                 self.elapsedOrbit = 0
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
-                print(f"New origin:{self.origin}\nNew Current{self.CurrentWaypoint.location}\n")
             
             # Increase elapsed time and adjust the commands
             else:
