@@ -146,7 +146,8 @@ class WaypointManager():
             # See if the orbit has orbited for the set time
             if(self.elapsedOrbit >= self.CurrentWaypoint.time):
                 # Set the next waypoint, change state, and reset orbit time
-                self.origin = self.CurrentWaypoint.location
+                if len(self.WaypointList != 1):
+                    self.origin = self.CurrentWaypoint.location
                 # Make sure that the index does not exceed list length
                 i = self.WaypointList.index(self.CurrentWaypoint) + 1
                 if i >= len(self.WaypointList):
