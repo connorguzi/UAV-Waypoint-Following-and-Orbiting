@@ -1,8 +1,10 @@
 import sys
-import WayPoint
-import Orbiting
-import PathFollowing
-import WaypointManager
+import ece163.FinalModules.WayPoint as WayPoint
+import ece163.FinalModules.Orbiting as Orbiting
+import ece163.FinalModules.WaypointManager as WaypointManager
+# import Orbiting
+# import PathFollowing
+# import WaypointManager
 
 sys.path.append("./")  # python is horrible, no?
 sys.path.append("..")  # python is horrible, no?
@@ -64,7 +66,7 @@ waypoint1 = WayPoint.WayPoint(
     n=0,
     e=0,
     d=-100,
-    radius=50,
+    radius=100,
     direction=1,
     time=100
 )
@@ -73,8 +75,8 @@ waypoint2 = WayPoint.WayPoint(
     e=0,
     d=-300,
     radius=100,
-    direction=-1,
-    time=50
+    direction=1,
+    time=100
 )
 waypoint3=WayPoint.WayPoint(
     n=0,
@@ -82,7 +84,7 @@ waypoint3=WayPoint.WayPoint(
     d=-200,
     radius=150,
     direction=1,
-    time=150
+    time=100
 )
 
 # orbit and path following gains
@@ -97,6 +99,7 @@ Va = 20 # airspeed
 
 vclc = VCLC.VehicleClosedLoopControl() # vehicle PID controller
 vclc.setControlGains(gains) # set the gains in the UAV
+vclc.setTrimInputs() # calculate the trim inputs
 vclc.setVehicleState(States.vehicleState( # initial vehicle state
     pn=origin[0][0],
     pe=origin[1][0],
@@ -121,7 +124,7 @@ height_error = [0 for i in range(n_steps)] # height error
 
 n = [0 for i in range(n_steps)] # north coordinate
 e = [0 for i in range(n_steps)] # east coordinate
-d = [0 for i in range(n_steps)] # down coordinate
+u = [0 for i in range(n_steps)] # down coordinate
 
 ##### SIMULATE #####
 for i in range(n_steps):
@@ -134,6 +137,58 @@ for i in range(n_steps):
     )
 
     # udpate the UAV state
+    vclc.Update(controls)
+    chi_true[i] = vclc.getVehicleState().chi # measure course
+    height_true[i] = -vclc.getVehicleState().pd # measure the height
+
+    # measure the error
+    chi_error[i] = math.degrees(chi_true[i] - chi_commanded[i])
+    height_error[i] = height_true[i] - height_commanded[i]
+
+    # convert to enu coordinates
+    enu_pos =Rotations.ned2enu([[
+        vclc.getVehicleState().pn,
+        vclc.getVehicleState().pe,
+        vclc.getVehicleState().pd
+    ]])
+
+    n[i] = enu_pos[0][0]
+    e[i] = enu_pos[0][1]
+    u[i] = enu_pos[0][2]
+
+
+##### PLOTTING #####
+fig = plt.figure(tight_layout =True)
+ax = fig.add_subplot(2,1,1, projection='3d')
+ax.plot3D(n, e, u)
+wp1 = Rotations.ned2enu([[waypoint1.location[0][0], waypoint1.location[1][0], waypoint1.location[2][0]]])
+wp2 = Rotations.ned2enu([[waypoint2.location[0][0], waypoint2.location[1][0], waypoint2.location[2][0]]])
+wp3 = Rotations.ned2enu([[waypoint3.location[0][0], waypoint3.location[1][0], waypoint3.location[2][0]]])
+ogn = Rotations.ned2enu([[origin[0][0], origin[1][0], origin[2][0]]])
+ax.plot3D(wp1[0][0], wp1[0][1], wp1[0][2], marker="o", markersize=5, color='r')
+ax.plot3D(wp2[0][0], wp2[0][1], wp2[0][2],  marker="o", markersize=5, color='y')
+ax.plot3D(wp3[0][0], wp3[0][1], wp3[0][2],  marker="o", markersize=5, color='k')
+ax.plot3D(ogn[0][0], ogn[0][1], ogn[0][2], marker="x", markersize=5, color='g')
+ax.set_title("UAV Position [ENU]")
+ax.set_xlabel("N [m]")
+ax.set_ylabel("E [m]")
+ax.set_zlabel("U [m]")
+
+ax = fig.add_subplot(2,2,3)
+ax.plot(t_data, chi_error)
+ax.set_title(" ")
+ax.set_xlabel("t [s]")
+ax.set_ylabel("Course Error [deg]")
+
+ax = fig.add_subplot(2,2,4)
+ax.plot(t_data, height_error)
+ax.set_title(" ")
+ax.set_xlabel("t [s]")
+ax.set_ylabel("Altitude Error [m]")
+
+plt.show()
+
+
 
 
 

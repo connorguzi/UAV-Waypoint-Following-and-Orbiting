@@ -4,11 +4,12 @@ import enum
 import sys
 
 sys.path.append("./")  # python is horrible, no?
-sys.path.append("..")  # python is horrible, no?
+sys.path.append("../")  # python is horrible, no?
 import ece163.Constants.VehiclePhysicalConstants as VPC
 import ece163.Utilities.MatrixMath as mm
 import ece163.Containers.States as States
-from WayPoint import WayPoint
+from ece163.FinalModules.WayPoint import WayPoint
+# from ece163.WayPoint import WayPoint
 import ece163.FinalModules.Orbiting as Orbiting
 import ece163.FinalModules.PathFollowing as PathFollowing
 
