@@ -41,6 +41,7 @@ class WaypointManager():
         self.k_path = k_path
         self.k_orbit = k_orbit
         self.origin = origin
+        self.original_origin = origin
 
     # def CalcDirectionVector(self, state: States.vehicleState, waypoint: WayPoint):
     #     """
@@ -124,6 +125,13 @@ class WaypointManager():
         self.CurrentWaypoint = self.WaypointList[0]
         return
 
+    def reset(self):
+        self.CurrentWaypoint = self.WaypointList[0]
+        self.elapsedOrbit = 0
+        self.WaypointState = WaypointStates.PATH_FOLLOWING
+        self.origin = self.original_origin
+        return 
+    
     def Update(self, state: States.vehicleState):
         """
         Author: Connor Guzikowski (cguzikow)

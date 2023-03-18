@@ -19,7 +19,7 @@ waypoint1 = WayPoint.WayPoint(
     d=-100,
     radius=50,
     direction=1,
-    time=800
+    time=400
 )
 waypoint2 = WayPoint.WayPoint(
     n=500,
@@ -27,15 +27,15 @@ waypoint2 = WayPoint.WayPoint(
     d=-250,
     radius=50,
     direction=1,
-    time=800
+    time=400
 )
 waypoint3=WayPoint.WayPoint(
-    n=3,
+    n=30,
     e=600,
     d=-350,
     radius=50,
     direction=1,
-    time=800
+    time=400
 )
 
 # orbit and path following gains
@@ -70,6 +70,10 @@ class WaypointControl(QtWidgets.QWidget):
 
         self.buildCurrentReferences(state=state)
         # self.usedLayout.addStretch()
+        return
+
+    def reset(self):
+        self.WM.reset()
         return
 
     def referenceChanged(self, unusedValue, unusedName):

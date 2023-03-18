@@ -143,6 +143,7 @@ class FinalDemo(baseInterface.baseInterface):
         return
 
     def resetSimulationActions(self):
+        self.referenceControl.reset()
         self.simulateInstance.reset()
         self.stateGrid.clearDataPointsAll()
         self.vehicleInstance.reset(

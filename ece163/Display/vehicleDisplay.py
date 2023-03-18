@@ -1,6 +1,7 @@
 """
 This module handles displaying the vehicle in an OpenGL window for easy visualization
 """
+import PyQt5
 import PyQt5.QtCore as QtCore
 import PyQt5.QtWidgets as QtWidgets
 import pyqtgraph.opengl
@@ -19,6 +20,15 @@ metersToPixelRatio = 1
 
 testLine = [[2, 2, 2], [2, 0, 100], [-2, 0, 100]]
 
+WP1 = [300, 0 ,100]
+WP2 = [500, 200 ,250]
+WP3 = [30, 600, 350]
+WP1_1 = (WP1[1], WP1[0], WP1[2] + 2)
+WP1_2 = (WP1[1], WP1[0], WP1[2] - 2)
+WP2_1 = (WP2[1], WP2[0], WP2[2] + 2)
+WP2_2 = (WP2[1], WP2[0], WP2[2] - 2)
+WP3_1 = (WP3[1], WP3[0], WP3[2] + 2)
+WP3_2 = (WP3[1], WP3[0], WP3[2] - 2)
 class vehicleDisplay(QtWidgets.QWidget):
 	updateVehiclePositionSignal = QtCore.pyqtSignal(list)
 	def __init__(self, parent=None):
@@ -83,8 +93,23 @@ class vehicleDisplay(QtWidgets.QWidget):
 		self.planeTrailLine.mode = 'line_strip'
 		self.planeTrailPoints = list()
 
-
 		self.aribtraryLines = list()
+		
+
+		pts1 = numpy.array([WP1_1, WP1_2])
+		pts2 = numpy.array([WP2_1, WP2_2])
+		pts3 = numpy.array([WP3_1, WP3_2])
+
+		self.WP1 = pyqtgraph.opengl.GLLinePlotItem(pos=pts1,color=(1, 0, 1, 1), width=10)
+		self.openGLWindow.addItem(self.WP1)
+		self.WP2 = pyqtgraph.opengl.GLLinePlotItem(pos=pts2,color=(1, 0, 1, 1), width=10)
+		self.openGLWindow.addItem(self.WP2)
+		self.WP3 = pyqtgraph.opengl.GLLinePlotItem(pos=pts3,color=(1, 0, 1, 1), width=10)
+		self.openGLWindow.addItem(self.WP3)
+		# self.WP1.mode = "line_strip"
+		# self.addAribtraryLine([[300, 0, -100]])
+
+		
 		# #  and another line for supposed paths and the like
 		# self.arbitraryLine = pyqtgraph.opengl.GLLinePlotItem()
 		# # self.arbitraryLine.setData(color=PyQt5.QtGui.QColor("blue"), width=1)
