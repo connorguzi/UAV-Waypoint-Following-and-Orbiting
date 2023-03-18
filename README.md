@@ -18,6 +18,8 @@ fly to waypoint 3 (black dot), orbit it for 100 seconds, then repeat. In the
 error graphs, when there is a spike in the error, that indicates a transition
 from orbiting a waypoint to moving to the next waypoint.
 
+![image](./Images/minSpecPlot.png)
+
 You can also run a verion of the GUI to see the UAV fly in the GUI:
 Run 'python FinalDemoSim.py'
 
