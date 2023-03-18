@@ -118,8 +118,6 @@ def getCommandedInputs(origin:'list[list[float]]', q: 'list[list[float]]',
     """
     wrapper function to return the commanded course and commanded height
     for path following and orbiting
-    @param: s -> projection of error vector ep
-    @param: r -> vector from origin to path
     @param: q -> path direction of the unit vector k^i
     @param: origin -> position of origin point that the line to waypoint is.
     @param: chi_inf -> gain that indicates what angle the UAV will approach waypoint from afar
@@ -132,3 +130,39 @@ def getCommandedInputs(origin:'list[list[float]]', q: 'list[list[float]]',
     commandedCourse = CalcCommandedCourse(q=q, origin=origin, chi_inf=chi_inf, k_path=k_path, state=state)
 
     return commandedHeight, commandedCourse
+
+def CalcSpeedAlongPath(origin:'list[list[float]]', q: 'list[list[float]]', ks:float, state:States.vehicleState):
+    """
+    Calculates the speed of the UAV along a Bezier curve
+    for path following and orbiting
+    @param: q -> path direction of the unit vector k^i
+    @param: origin -> position of origin point that the line to waypoint is.
+    @param: ks -> gain
+    @param: state -> current state of the UAV
+    """
+    chi_f = CalcPathCourseAngle(q=q, state=state)
+    chi_error = state.chi - chi_f
+    Vg = math.hypot(state.u, state.v, state.w)
+    R_inertial2path = CalcR_Inertial2Path(chi=chi_f)
+    es = CalcRelativePathError(state=state, origin=origin, R=R_inertial2path)[0][0]
+
+    s_dot = (ks * es) + (Vg * math.cos(chi_error))
+    return s_dot
+
+def getPosAlongPath(currentPos:float, dT:float, origin:'list[list[float]]', q: 'list[list[float]]', ks:float, state:States.vehicleState):
+    """
+    Calculates the how far along the path the UAV is as a percent
+    @param: currentPos -> how far the UAV is along the path as a percent
+    @param: dT -> time step
+    @param: q -> path direction of the unit vector k^i
+    @param: origin -> position of origin point that the line to waypoint is.
+    @param: ks -> gain
+    @param: state -> current state of the UAV
+    """
+    speedAlongPath = CalcSpeedAlongPath(origin, q, ks, state)
+    newPos = currentPos + speedAlongPath * dT
+    if newPos > 1:
+        newPos = 1
+    if newPos < 0:
+        newPos = 0
+    return newPos
