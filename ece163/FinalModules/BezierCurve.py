@@ -10,6 +10,7 @@ sys.path.append('../')
 from WayPoint import WayPoint
 from Utilities import MatrixMath as mm
 from Utilities import Rotations
+from matplotlib import bezier
 
 def normalizeBezierDirection(coords: 'tuple()', curHeight: float, endHeight: float):
     unnormalizedDirectionVector = [[coords[0]],
