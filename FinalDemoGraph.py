@@ -13,6 +13,7 @@ import os
 import math
 import copy
 from matplotlib import pyplot as plt
+from matplotlib.animation import FuncAnimation
 from mpl_toolkits import mplot3d
 
 import ece163.Utilities.MatrixMath as mm
@@ -40,6 +41,7 @@ import ece163.Constants.VehicleSensorConstants as VSC
 
 import ece163.FinalModules.WayPoint as WayPoint
 import ece163.FinalModules.WaypointManager as WaypointManager
+from ece163.FinalModules.BezierCurve import normalizeBezierDirection, controlPtsFromWayPts, unpackBezierPosition
 
 ##### GAINS #####
 gains = Controls.controlGains() # UAV gains object
@@ -65,41 +67,43 @@ waypoint1 = WayPoint.WayPoint(
     n=10,
     e=200,
     d=-150,
-    radius=50,
+    radius=75,
     direction=1,
-    time=100
+    time=25
 )
 waypoint2 = WayPoint.WayPoint(
     n=200,
     e=200,
     d=-200,
-    radius=50,
-    direction=1,
-    time=100
+    radius=150,
+    direction=-1,
+    time=75
 )
 waypoint3=WayPoint.WayPoint(
-    n=50,
-    e=25,
-    d=-100,
-    radius=50,
+    n=300,
+    e=10,
+    d=-200,
+    radius=100,
     direction=1,
-    time=100
+    time=50
 )
 waypoint4=WayPoint.WayPoint(
     n=10,
     e=25,
     d=-100,
-    radius=50,
-    direction=1,
-    time=100
+    radius=100,
+    direction=-1,
+    time=75
 )
 
 # orbit and path following gains
 k_orbit = 1
 k_path = 0.05 # how fast we transition into the path
+k_s = 0.5 # bezier curve gain
+d_min = 1000
 
-WpList = [waypoint1, waypoint2, waypoint3]
-WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
+WpList = [waypoint1, waypoint2, waypoint3, waypoint4]
+WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path, k_s=k_s, d_min=d_min)
 
 ##### VEHICLE SETUP #####
 Va = 25.0 # airspeed
@@ -120,6 +124,8 @@ vState.pn = origin[0][0]
 vState.pe = origin[1][0]
 vState.pd = origin[2][0]
 vclc.setVehicleState(vState)
+
+##### WAYPOINT PLOTTING #####
 
 ##### SIMULATION SETUP ###
 # time step dT
@@ -176,25 +182,47 @@ for i in range(n_steps):
     e[i] = enu_pos[0][1]
     u[i] = enu_pos[0][2]
 
+    # ax.plot3D(n[i], e[i], u[i]) # plot the current point
+
 
 ##### PLOTTING #####
 fig = plt.figure(tight_layout =True)
-ax = fig.add_subplot(2,1,1, projection='3d')
-ax.plot3D(n, e, u)
+ax = fig.add_subplot(1,2,1, projection='3d')
 wp1 = Rotations.ned2enu([[waypoint1.location[0][0], waypoint1.location[1][0], waypoint1.location[2][0]]])
 wp2 = Rotations.ned2enu([[waypoint2.location[0][0], waypoint2.location[1][0], waypoint2.location[2][0]]])
 wp3 = Rotations.ned2enu([[waypoint3.location[0][0], waypoint3.location[1][0], waypoint3.location[2][0]]])
+wp4 = Rotations.ned2enu([[waypoint4.location[0][0], waypoint4.location[1][0], waypoint4.location[2][0]]])
 ogn = Rotations.ned2enu([[origin[0][0], origin[1][0], origin[2][0]]])
+
 ax.plot3D(wp1[0][0], wp1[0][1], wp1[0][2], marker="o", markersize=5, color='r')
 ax.plot3D(wp2[0][0], wp2[0][1], wp2[0][2],  marker="o", markersize=5, color='y')
 ax.plot3D(wp3[0][0], wp3[0][1], wp3[0][2],  marker="o", markersize=5, color='k')
+ax.plot3D(wp4[0][0], wp4[0][1], wp4[0][2],  marker="o", markersize=5, color='c')
 ax.plot3D(ogn[0][0], ogn[0][1], ogn[0][2], marker="x", markersize=5, color='g')
+ax.plot3D(n, e, u);
+# fig1 = plt.figure()
+# ax1 = plt.axes(projection='3d')
+# # fig1, ax1 = plt.subplots(projec)
+# def animate(i):
+#     """
+#     Animation Function
+#     """
+#     # grab the points
+#     # ax1.clear()
+#     this_n = n[i]
+#     this_e = e[i]
+#     this_u = u[i]
+#     ax1.plot3D(this_n, this_e, this_u, 'r.')
+#     # plt.show()
+
+# animation = FuncAnimation(fig=fig1, func=animate, frames=n_steps, repeat=False, interval=0.00001)
+
 ax.set_title("UAV Position [ENU]")
 ax.set_xlabel("N [m]")
 ax.set_ylabel("E [m]")
 ax.set_zlabel("U [m]")
 
-ax = fig.add_subplot(2,2,3)
+ax = fig.add_subplot(2,2,2)
 ax.plot(t_data, chi_error)
 ax.set_title(" ")
 ax.set_xlabel("t [s]")
