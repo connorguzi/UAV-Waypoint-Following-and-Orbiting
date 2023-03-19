@@ -7,9 +7,9 @@ import sys
 sys.path.append('./')
 sys.path.append('../')
 
-from WayPoint import WayPoint
-from Utilities import MatrixMath as mm
-from Utilities import Rotations
+from ece163.FinalModules.WayPoint import WayPoint
+from ece163.Utilities import MatrixMath as mm
+from ece163.Utilities import Rotations
 from matplotlib import bezier
 
 def normalizeBezierDirection(coords: 'tuple()', curHeight: float, endHeight: float):
@@ -28,7 +28,7 @@ def unpackBezierPosition(coords: 'tuple()', curHeight: float):
     return ned
 
 
-def controlPtsFromWayPts(wp1: WayPoint.WayPoint, wp2: WayPoint.WayPoint, phi1: float, dmin: float):
+def controlPtsFromWayPts(wp1: WayPoint, wp2: WayPoint, phi1: float, dmin: float):
     """
     Calculates the position of the 4 control points used to define a
     3rd degree Bezier curev to take the UAV from the orbit of

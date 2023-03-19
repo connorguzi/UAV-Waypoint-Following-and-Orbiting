@@ -13,6 +13,9 @@ from ece163.FinalModules.WayPoint import WayPoint
 import ece163.FinalModules.Orbiting as Orbiting
 import ece163.FinalModules.PathFollowing as PathFollowing
 
+from matplotlib import bezier
+from ece163.FinalModules.BezierCurve import normalizeBezierDirection, controlPtsFromWayPts, unpackBezierPosition, getBezierDerivative
+
 class WaypointStates(enum.Enum):
 	"""
 	class WaypointStates(enum.Enum):
@@ -24,7 +27,7 @@ class WaypointStates(enum.Enum):
 
 
 class WaypointManager():
-    def __init__(self, WaypointList=None, k_path = 0.05, k_orbit = 0.05, origin = [[0], [0], [0]], dt=None) -> None:
+    def __init__(self, WaypointList=None, k_path = 0.05, k_orbit = 0.05, k_s=0.5, d_min=10, origin = [[0], [0], [0]], dt=None) -> None:
         self.WaypointState = WaypointStates.PATH_FOLLOWING
         self.WaypointList = WaypointList
         if self.WaypointList:
@@ -40,8 +43,17 @@ class WaypointManager():
         self.chi_inf = math.pi / 2
         self.k_path = k_path
         self.k_orbit = k_orbit
+        self.k_s = k_s
         self.origin = origin
         self.original_origin = origin
+        self.d_min = d_min
+        self.s = 0
+        
+        
+        starting_waypoint = WayPoint(origin[0][0], origin[1][0], origin[2][0])
+        control_points = controlPtsFromWayPts(starting_waypoint, self.CurrentWaypoint, 0, self.d_min)
+        self.bezier_curve = bezier.BezierSegment(starting_waypoint.location)
+        self.bezier_derivative = getBezierDerivative(self.bezier_curve)
 
     # def CalcDirectionVector(self, state: States.vehicleState, waypoint: WayPoint):
     #     """
@@ -151,7 +163,15 @@ class WaypointManager():
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
 
             else:
+                new_s = PathFollowing.getPosAlongPath(
+                    self.s, self.dT, self.origin, q, self.k_s, state)
+                if new_s > self.s:
+                    self.s = new_s
+                self.origin = unpackBezierPosition(self.bezier_curve(self.s), state.pd)
+                q = normalizeBezierDirection(self.bezier_derivative(self.s), state.pd, self.CurrentWaypoint.location[2][0])
+                
                 height_command, course_command = PathFollowing.getCommandedInputs(state=state, origin=self.origin, q=q, chi_inf=self.chi_inf, k_path=self.k_path)
+                height_command = -self.CurrentWaypoint.location[2][0]
        
         elif self.WaypointState == WaypointStates.ORBITING:
             # See if the orbit has orbited for the set time
@@ -159,14 +179,24 @@ class WaypointManager():
                 # Set the next waypoint, change state, and reset orbit time
                 if len(self.WaypointList) != 1:
                     self.origin = self.CurrentWaypoint.location
+
                 # Make sure that the index does not exceed list length
+                waypoint1 = self.CurrentWaypoint
                 i = self.WaypointList.index(self.CurrentWaypoint) + 1
                 if i >= len(self.WaypointList):
                     i = 0
                 self.CurrentWaypoint = self.WaypointList[i]
+                waypoint2 = self.CurrentWaypoint
                 self.WaypointState = WaypointStates.PATH_FOLLOWING
                 self.elapsedOrbit = 0
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
+
+                # calculate control points
+                control_points = controlPtsFromWayPts(waypoint1, waypoint2, Orbiting.CalcAngleAlongCircle(state, waypoint1), self.d_min)
+                self.bezier_curve = bezier.BezierSegment(control_points=control_points)
+                self.bezier_derivative = getBezierDerivative(self.bezier_curve)
+
+
             
             # Increase elapsed time and adjust the commands
             else:
