@@ -1,10 +1,6 @@
 Traceback (most recent call last):
-  File "FinalDemoSim.py", line 263, in <module>
-    ourWindow = FinalDemo()
-  File "FinalDemoSim.py", line 33, in __init__
-    super().__init__(parent)
-  File "C:\Users\conno\Documents\ECE163\bezierloiterandorbit\ece163\Display\baseInterface.py", line 94, in __init__
-    self.vehicleInstance = vehicleDisplay.vehicleDisplay()
-  File "C:\Users\conno\Documents\ECE163\bezierloiterandorbit\ece163\Display\vehicleDisplay.py", line 99, in __init__
-    pts = numpy.array([WP1_1, WP1_2], [WP2_1, WP2_2], [WP3_1, WP3_2])
-TypeError: array() takes from 1 to 2 positional arguments but 3 were given
+  File "C:\Python38\lib\site-packages\pyqtgraph\graphicsItems\GraphicsWidgetAnchor.py", line 105, in __geometryChanged
+    p = self.__parent.boundingRect().bottomRight() * Point(self.__parentAnchor)
+  File "C:\Python38\lib\site-packages\pyqtgraph\graphicsItems\GraphicsWidget.py", line 59, in boundingRect
+    geometry = self.geometry()
+RuntimeError: wrapped C/C++ object of type ViewBox has been deleted

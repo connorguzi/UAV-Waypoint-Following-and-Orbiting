@@ -23,9 +23,11 @@ from orbiting a waypoint to moving to the next waypoint.
 You can also run a verion of the GUI to see the UAV fly in the GUI:
 Run 'python FinalDemoSim.py'
 
-The GUI hack is not fully complete (in that the waypoints are not shown), but the
-UAV path is correct. It shows the UAV flying to the waypoint, orbiting it, flying
-to the next waypoint, etc.
+When you run the GUI, you can see the waypoints and the UAV circling them. To change 
+the waypoints you need to edit the coordinates in Display/WaypointControl.py and in 
+Display/vehicleDisplay.py. An example of the simulation running in the GUI is shown below:
+
+![Alt Text](./Images/EEC163_Final_GIF.gif)
 
 At this point in the project, we have completed straight-line path following,
 oriting, and the merging of the two via moving from waypoint to waypoint and
