@@ -26,6 +26,7 @@ import os
 import math
 import copy
 from matplotlib import pyplot as plt
+from matplotlib import bezier
 from mpl_toolkits import mplot3d
 
 import ece163.Utilities.MatrixMath as mm
@@ -312,7 +313,21 @@ def printErrorMessage_compareObject(failedVals=[], keyName="key", obj1="obj1", o
         printErrorMessage_compareObject(
             failedVals, keyName="Value", obj1="State 1", obj2="State 2")
 
-# Test Orbiting
+# Helper Functions
+def normalizeBezierDirection(coords: 'tuple()', curHeight:float, endHeight:float):
+    unnormalizedDirectionVector = [[coords[0]], [coords[1]], [endHeight - curHeight]]
+    normalizedDirectionVector = mm.vectorNorm(unnormalizedDirectionVector)
+    return normalizedDirectionVector
+
+def unpackBezierPosition(coords:'tuple()', curHeight:float):
+    ned = [
+        [coords[0]],
+        [coords[1]],
+        [curHeight]
+    ]
+    return ned
+
+# Test Path Following
 
 
 def testing_PathFollowing_Graphical_InitOnPath(gains, printPlots=False):
@@ -666,6 +681,157 @@ def testing_PathFollowing_Graphical_PathChange(trimControls, trimState, gains, p
     evaluateTest(cur_test, True)
 
 
+def testing_PathFollowing_Graphical_Bezier(trimControls, trimState, gains, printPlots=False):
+    # %%
+    cur_test = "PathFollowing Graphical Test: Bezier"
+
+    # Initialize parameters
+    origin1 = [
+        [0],
+        [0],
+        [-100]
+    ]
+    origin = origin1
+    chi_inf = math.radians(90)
+    k_path = 0.1
+    ks = 0.1
+
+    controlPoints = [
+        [0.0, 0.0],
+        [0.0, -1000.0],
+        [1000.0, 1000.0],
+        [1000.0, 0.0]
+    ]
+    endHeight = -100
+
+    totalTime = 100
+    breakTime = 50
+
+    # Initialize internal variables
+    vclc = VCLC.VehicleClosedLoopControl()
+    tempState = trimState
+    tempState.pn = origin[0][0]
+    tempState.pe = origin[1][0]
+    tempState.pd = origin[2][0]
+    Va = trimState.Va
+    vclc.setVehicleState(tempState)
+    vclc.setControlGains(gains)
+    vclc.setTrimInputs(trimControls)
+
+    numControlPoints = len(controlPoints) - 1
+    controlPoints_derivative = [
+        [controlPoints[i+1][0] - controlPoints[i][0],
+        controlPoints[i+1][1] - controlPoints[i][1]]
+        for i in range(numControlPoints)
+    ]
+    curve = bezier.BezierSegment(controlPoints)
+    curveDerivative = bezier.BezierSegment(controlPoints_derivative)
+    s = 0 # Percent along the bezier curve
+
+    dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
+    breakStep = int(breakTime/dT)
+    n_steps = int(totalTime/dT)
+    t_data = [i*dT for i in range(n_steps)]
+
+    chi_c = [0 for i in range(n_steps)]
+    chi_t = [0 for i in range(n_steps)]
+    chi_e = [0 for i in range(n_steps)]
+    h_c = [0 for i in range(n_steps)]
+    h_t = [0 for i in range(n_steps)]
+    h_e = [0 for i in range(n_steps)]
+    x = [0 for i in range(n_steps)]
+    y = [0 for i in range(n_steps)]
+    z = [0 for i in range(n_steps)]
+
+    s_data = [0 for i in range(n_steps)]
+    curvex = [0 for i in range(n_steps)]
+    curvey = [0 for i in range(n_steps)]
+    curvez = [-endHeight for i in range(n_steps)]
+    for i in range(n_steps):
+        temp = curve.point_at_t(i / n_steps)
+        curvex[i] = temp[0]
+        curvey[i] = temp[1]
+    
+    q = normalizeBezierDirection(curveDerivative(s), vclc.getVehicleState().pd, endHeight)
+
+    # Run Update Loop
+    for i in range(n_steps):
+        # Update reference commands
+        h_c[i], chi_c[i] = PathFollowing.getCommandedInputs(
+            origin=origin,
+            q=q,
+            chi_inf=chi_inf,
+            k_path=k_path,
+            state=vclc.getVehicleState()
+        )
+        controls = Controls.referenceCommands(
+            courseCommand=chi_c[i],
+            altitudeCommand=h_c[i],
+            airspeedCommand=Va
+        )
+
+        # Update state
+        vclc.Update(controls)
+        chi_t[i] = vclc.getVehicleState().chi
+        h_t[i] = -vclc.getVehicleState().pd
+
+        # Update origin and direction based on Bezier curve
+        s_data[i] = s
+        new_s = PathFollowing.getPosAlongPath(s, dT, origin, q, ks, vclc.getVehicleState())
+        if new_s > s:
+            s = new_s
+        origin = unpackBezierPosition(curve(s), vclc.getVehicleState().pd)
+        q = normalizeBezierDirection(curveDerivative(s), vclc.getVehicleState().pd, endHeight)
+
+        # Update variables to plot
+        chi_e[i] = chi_t[i] - chi_c[i]
+        while chi_e[i] < -math.pi:
+            chi_e[i] += 2*math.pi
+        while chi_e[i] > math.pi:
+            chi_e[i] -= 2*math.pi
+        chi_e[i] = math.degrees(chi_e[i])
+
+        h_e[i] = h_t[i] - h_c[i]
+
+        x[i] = vclc.getVehicleState().pn
+        y[i] = vclc.getVehicleState().pe
+        z[i] = -vclc.getVehicleState().pd
+
+    fig = plt.figure(tight_layout=True)
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(t_data, s_data)
+
+    fig = plt.figure(tight_layout=True)
+    ax = fig.add_subplot(2, 1, 1, projection='3d')
+    ax.plot3D(x, y, z)
+    ax.plot3D(curvex, curvey, curvez, color='orange')
+    ax.set_title("UAV Position [NEU]")
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_zlabel("z [m]")
+
+    ax = fig.add_subplot(2, 2, 3)
+    ax.plot(t_data, chi_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Course Error [deg]")
+
+    ax = fig.add_subplot(2, 2, 4)
+    ax.plot(t_data, h_e)
+    ax.set_title(" ")
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("Altitude Error [m]")
+    plt.show()
+
+    # Check to show or print plot
+    if printPlots:
+        plt.savefig(f"Plots/PathFollowingTest_PathChange.png")
+    else:
+        plt.show()
+
+    evaluateTest(cur_test, True)
+
+
 # %% Start Message
 print(f"\n\nRunning {os.path.basename(__file__)}:")
 
@@ -711,7 +877,9 @@ for key, val in vars(gains).items():
 printPlot = False
 # testing_PathFollowing_Graphical_InitOnPath(gains, printPlot)
 # testing_PathFollowing_Graphical_InitOffPath(gains, printPlot)
-testing_PathFollowing_Graphical_PathChange(trimControls=vTrim.getTrimControls(
+# testing_PathFollowing_Graphical_PathChange(trimControls=vTrim.getTrimControls(
+# ), trimState=vTrim.getTrimState(), gains=gains, printPlots=printPlot)
+testing_PathFollowing_Graphical_Bezier(trimControls=vTrim.getTrimControls(
 ), trimState=vTrim.getTrimState(), gains=gains, printPlots=printPlot)
 
 # %% Print results:
