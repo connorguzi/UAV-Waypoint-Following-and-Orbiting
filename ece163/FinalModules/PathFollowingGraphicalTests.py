@@ -771,11 +771,11 @@ def testing_PathFollowing_Graphical_Bezier(trimControls, trimState, gains, print
     vclc.setControlGains(gains)
     vclc.setTrimInputs(trimControls)
 
-    numControlPoints = len(controlPoints) - 1
+    n = len(controlPoints) - 1
     controlPoints_derivative = [
-        [controlPoints[i+1][0] - controlPoints[i][0],
-         controlPoints[i+1][1] - controlPoints[i][1]]
-        for i in range(numControlPoints)
+        [n * (controlPoints[i+1][0] - controlPoints[i][0]),
+         n * (controlPoints[i+1][1] - controlPoints[i][1])]
+        for i in range(n)
     ]
     curve = bezier.BezierSegment(controlPoints)
     curveDerivative = bezier.BezierSegment(controlPoints_derivative)
@@ -818,6 +818,7 @@ def testing_PathFollowing_Graphical_Bezier(trimControls, trimState, gains, print
             k_path=k_path,
             state=vclc.getVehicleState()
         )
+        h_c[i] = -endHeight
         controls = Controls.referenceCommands(
             courseCommand=chi_c[i],
             altitudeCommand=h_c[i],
@@ -924,7 +925,7 @@ def testing_PathFollowing_Graphical_BezierFromWPs(trimControls, trimState, gains
     controlPoints = controlPtsFromWayPts(Waypoint1, Waypoint2, phi1, dmin)
 
     endHeight = Waypoint2.location[2][0]
-    totalTime = 10
+    totalTime = 50
     breakTime = 50
 
     # Initialize internal variables
@@ -938,11 +939,11 @@ def testing_PathFollowing_Graphical_BezierFromWPs(trimControls, trimState, gains
     vclc.setControlGains(gains)
     vclc.setTrimInputs(trimControls)
 
-    numControlPoints = len(controlPoints) - 1
+    n = len(controlPoints) - 1
     controlPoints_derivative = [
-        [controlPoints[i+1][0] - controlPoints[i][0],
-         controlPoints[i+1][1] - controlPoints[i][1]]
-        for i in range(numControlPoints)
+        [n * (controlPoints[i+1][0] - controlPoints[i][0]),
+         n * (controlPoints[i+1][1] - controlPoints[i][1])]
+        for i in range(n)
     ]
     curve = bezier.BezierSegment(controlPoints)
     curveDerivative = bezier.BezierSegment(controlPoints_derivative)
@@ -985,6 +986,7 @@ def testing_PathFollowing_Graphical_BezierFromWPs(trimControls, trimState, gains
             k_path=k_path,
             state=vclc.getVehicleState()
         )
+        h_c[i] = -endHeight
         controls = Controls.referenceCommands(
             courseCommand=chi_c[i],
             altitudeCommand=h_c[i],
@@ -1118,8 +1120,8 @@ printPlot = False
 # testing_PathFollowing_Graphical_InitOffPath(gains, printPlot)
 # testing_PathFollowing_Graphical_PathChange(trimControls=vTrim.getTrimControls(
 # ), trimState=vTrim.getTrimState(), gains=gains, printPlots=printPlot)
-# testing_PathFollowing_Graphical_Bezier(trimControls=vTrim.getTrimControls(
-# ), trimState=vTrim.getTrimState(), gains=gains, printPlots=printPlot)
+testing_PathFollowing_Graphical_Bezier(trimControls=vTrim.getTrimControls(
+), trimState=vTrim.getTrimState(), gains=gains, printPlots=printPlot)
 testing_PathFollowing_Graphical_BezierFromWPs(trimControls=vTrim.getTrimControls(
 ), trimState=vTrim.getTrimState(), gains=gains, printPlots=printPlot)
 
