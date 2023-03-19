@@ -27,7 +27,7 @@ When you run the GUI, you can see the waypoints and the UAV circling them. To ch
 the waypoints you need to edit the coordinates in Display/WaypointControl.py and in 
 Display/vehicleDisplay.py. An example of the simulation running in the GUI is shown below:
 
-![Alt Text](./Images/EEC163_Final_GIF.gif)
+![Alt Text](./Images/ECE163_Final_GIF.gif)
 
 At this point in the project, we have completed straight-line path following,
 oriting, and the merging of the two via moving from waypoint to waypoint and
