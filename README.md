@@ -26,10 +26,8 @@ Run 'python FinalDemoSim.py'
 When you run the GUI, you can see the waypoints and the UAV circling them. To change 
 the waypoints you need to edit the coordinates in Display/WaypointControl.py and in 
 Display/vehicleDisplay.py. An example of the simulation running in the GUI is shown below:
-<p align="center">
-  <img src="./Images/ECE163_Final_GIF.gif" alt="Sublime's custom image"/>
-</p>
 
+![Alt Text](./Images/ECE163_Final_GIF.gif)
 
 At this point in the project, we have completed straight-line path following,
 oriting, and the merging of the two via moving from waypoint to waypoint and
