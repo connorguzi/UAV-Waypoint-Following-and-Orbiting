@@ -380,6 +380,22 @@ def controlPtsFromWayPts(wp1: WayPoint.WayPoint, wp2: WayPoint.WayPoint, phi1: f
     return [cp1, cp2, cp3, cp4]
 
 
+def getBezierDerivative(curve: bezier.BezierSegment):
+    """
+    Calculates the derivative of the bezier curve as a new bezier
+    curve
+    @param: curve -> Bezier cirve to find the derivative of
+    """
+    controlPoints = curve.control_points
+    n = curve.degree
+    controlPoints_derivative = [
+        [n * (controlPoints[i+1][0] - controlPoints[i][0]),
+         n * (controlPoints[i+1][1] - controlPoints[i][1])]
+        for i in range(n)
+    ]
+    curveDerivative = bezier.BezierSegment(controlPoints_derivative)
+    return curveDerivative
+
 # Test Path Following
 
 
@@ -771,14 +787,8 @@ def testing_PathFollowing_Graphical_Bezier(trimControls, trimState, gains, print
     vclc.setControlGains(gains)
     vclc.setTrimInputs(trimControls)
 
-    n = len(controlPoints) - 1
-    controlPoints_derivative = [
-        [n * (controlPoints[i+1][0] - controlPoints[i][0]),
-         n * (controlPoints[i+1][1] - controlPoints[i][1])]
-        for i in range(n)
-    ]
     curve = bezier.BezierSegment(controlPoints)
-    curveDerivative = bezier.BezierSegment(controlPoints_derivative)
+    curveDerivative = getBezierDerivative(curve)
     s = 0  # Percent along the bezier curve
 
     dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
