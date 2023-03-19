@@ -2,6 +2,7 @@ import sys
 import ece163.FinalModules.WayPoint as WayPoint
 import ece163.FinalModules.Orbiting as Orbiting
 import ece163.FinalModules.WaypointManager as WaypointManager
+import ece163.FinalModules.WaypointManager_Bezier as WaypointManager_Bezier
 # import Orbiting
 # import PathFollowing
 # import WaypointManager
@@ -103,7 +104,8 @@ k_s = 0.5 # bezier curve gain
 d_min = 50
 
 WpList = [waypoint1, waypoint2, waypoint3, waypoint4]
-WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path, k_s=k_s, d_min=d_min)
+WM = WaypointManager_Bezier.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path, k_s=k_s, d_min=d_min)
+# WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path)
 
 ##### VEHICLE SETUP #####
 Va = 25.0 # airspeed
