@@ -31,7 +31,7 @@ class FinalDemo(baseInterface.baseInterface):
     def __init__(self, parent=None):
         self.simulateInstance = ece163.Simulation.FinalDemoSimulate.FinalDemoSimulate()
         super().__init__(parent)
-        self.setWindowTitle("ECE163 Chapter 6")
+        self.setWindowTitle("ECE163 Final")
         stateplotElements = [[x] for x in stateNamesofInterest]
         stateplotElements.append(['Va', 'Vg'])
         statetitleNames = list(stateNamesofInterest)
