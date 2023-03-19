@@ -114,19 +114,48 @@ class WaypointManager():
     #     position = [[state.pn], [state.pe], [state.pd]]
     #     return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
 
-    def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
+    # def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
+    #     """
+    #     Author: Connor Guzikowski (cguzikow)
+    #     Date: 03.13.2023
+    #     Function to determine whether UAV is in radius of waypoint or not
+    #     @param: state -> current state of UAV
+    #     @param: waypoint -> position of desired waypoint
+    #     @param: radius -> defined radius around the waypoint
+
+    #     """
+    #     p_waypoint = [[waypoint.location[0][0]], [waypoint.location[1][0]], [0]]
+    #     position = [[state.pn], [state.pe], [0]]
+    #     return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
+
+    def InWaypointHalfplane(self, state: States.vehicleState, waypointWindow: 'list[WayPoint]'):
         """
-        Author: Connor Guzikowski (cguzikow)
-        Date: 03.13.2023
-        Function to determine whether UAV is in radius of waypoint or not
+        Author: Bailen Lawson (bjlawson)
+        Date: 03.19.2023
+        Function to determine if UAV is in halfplane of waypoint
         @param: state -> current state of UAV
         @param: waypoint -> position of desired waypoint
         @param: radius -> defined radius around the waypoint
 
         """
-        p_waypoint = [[waypoint.location[0][0]], [waypoint.location[1][0]], [0]]
-        position = [[state.pn], [state.pe], [0]]
-        return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
+        # Get direction vectors
+        dir_prv2cur = self.CalcDirectionVector(loc1=waypointWindow[0].location, loc2=waypointWindow[1].location)
+        dir_cur2next = self.CalcDirectionVector(loc1=waypointWindow[1].location, loc2=waypointWindow[2].location)
+
+        # Get normal vector
+        n = self.CalcDirectionVector(dir_prv2cur, dir_cur2next)
+
+        # Calculate position in the half plane (<0 not crossed, >0 crossed)
+        p = [
+            [state.pn],
+            [state.pe],
+            [state.pd]
+        ]
+        halfPlanePos = mm.multiply(
+            mm.transpose(mm.subtract(p, waypointWindow[1].location)),
+            n
+        )
+        return halfPlanePos[0][0] >= 0
 
     def SetWaypointList(self, waypoints:'list[WayPoint]'):
         """
@@ -160,8 +189,18 @@ class WaypointManager():
         q = self.CalcDirectionVector(self.origin, self.CurrentWaypoint.location)
         
         if self.WaypointState == WaypointStates.PATH_FOLLOWING:
-            # Check to see if the UAV is in the orbit radius
-            if(self.InWaypointRadius(state=state, waypoint=self.CurrentWaypoint)):
+            # Get previous, current, and next waypoint
+            i = self.WaypointList.index(self.CurrentWaypoint)
+            i_prv = i - 1
+            i_next = i + 1
+            if i_prv < 0:
+                i_prv = len(self.WaypointList) + i_prv
+            if i_next >= len(self.WaypointList):
+                i_next = 0
+
+            # Check if UAV is inside the current waypoint's halfplane
+            waypointWindow = [self.WaypointList[i_prv], self.WaypointList[i], self.WaypointList[i_next]]
+            if(self.InWaypointHalfplane(state=state, waypointWindow=waypointWindow)):
                 self.WaypointState = WaypointStates.ORBITING
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
 
