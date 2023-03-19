@@ -80,10 +80,10 @@ waypoint2 = WayPoint.WayPoint(
     time=75
 )
 waypoint3=WayPoint.WayPoint(
-    n=200,
+    n=300,
     e=10,
-    d=-125,
-    radius=75,
+    d=-200,
+    radius=100,
     direction=1,
     time=50
 )
@@ -100,7 +100,7 @@ waypoint4=WayPoint.WayPoint(
 k_orbit = 1
 k_path = 0.05 # how fast we transition into the path
 k_s = 0.5 # bezier curve gain
-d_min = 50
+d_min = 1000
 
 WpList = [waypoint1, waypoint2, waypoint3, waypoint4]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path, k_s=k_s, d_min=d_min)
