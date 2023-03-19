@@ -14,26 +14,26 @@ import ece163.FinalModules.WayPoint as WayPoint
 origin = [[VPC.InitialNorthPosition], [VPC.InitialEastPosition], [VPC.InitialDownPosition]] # world origin
 
 waypoint1 = WayPoint.WayPoint(
-    n=300,
+    n=100,
     e=0,
     d=-100,
-    radius=50,
+    radius=25,
     direction=1,
     time=400
 )
 waypoint2 = WayPoint.WayPoint(
-    n=500,
+    n=200,
     e=200,
-    d=-250,
-    radius=50,
-    direction=1,
+    d=-150,
+    radius=25,
+    direction=-1,
     time=400
 )
 waypoint3=WayPoint.WayPoint(
     n=30,
-    e=600,
-    d=-350,
-    radius=50,
+    e=300,
+    d=-200,
+    radius=25,
     direction=1,
     time=400
 )
