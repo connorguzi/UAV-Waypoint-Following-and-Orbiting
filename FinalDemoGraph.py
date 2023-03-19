@@ -72,9 +72,9 @@ waypoint1 = WayPoint.WayPoint(
     time=25
 )
 waypoint2 = WayPoint.WayPoint(
-    n=200,
-    e=200,
-    d=-200,
+    n=500,
+    e=500,
+    d=-150,
     radius=150,
     direction=-1,
     time=75
@@ -100,7 +100,7 @@ waypoint4=WayPoint.WayPoint(
 k_orbit = 1
 k_path = 0.05 # how fast we transition into the path
 k_s = 0.5 # bezier curve gain
-d_min = 1000
+d_min = 50
 
 WpList = [waypoint1, waypoint2, waypoint3, waypoint4]
 WM = WaypointManager.WaypointManager(origin=origin, WaypointList=WpList, k_orbit=k_orbit, k_path=k_path, k_s=k_s, d_min=d_min)
@@ -130,7 +130,7 @@ vclc.setVehicleState(vState)
 ##### SIMULATION SETUP ###
 # time step dT
 dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
-totalTime = 500 # total simulation time [s]
+totalTime = 300 # total simulation time [s]
 n_steps = int(totalTime / dT) # simulation steps
 t_data = [i*dT for i in range(n_steps)] # time array
 

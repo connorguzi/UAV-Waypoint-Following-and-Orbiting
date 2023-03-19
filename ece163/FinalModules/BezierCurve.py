@@ -42,9 +42,9 @@ def controlPtsFromWayPts(wp1: WayPoint, wp2: WayPoint, phi1: float, dmin: float)
     phi2 = -1*wp1.direction*wp2.direction*phi1  # Orbit angle around waypoint 2
 
     # Distance between control points 1 and 2
-    d1 = wp1.direction * (dmin + wp1.radius)
+    d1 = dmin + wp1.radius
     # Distance between control points 3 and 4
-    d2 = wp1.direction * (dmin + wp2.radius)
+    d2 = dmin + wp2.radius
     # Tangent angle to wp1 at current orbit angle
     chi0 = phi1 + wp1.direction * math.pi/2
     # Rotation matrix from inertial to tangent direction
@@ -61,13 +61,13 @@ def controlPtsFromWayPts(wp1: WayPoint, wp2: WayPoint, phi1: float, dmin: float)
         wp2.location[1][0] + wp2.radius * math.cos(phi2)
     ]
 
-    cp2_ext = mm.multiply(R, [[wp1.direction * d1], [0], [0]])
+    cp2_ext = mm.multiply(R, [[d1], [0], [0]])
     cp2 = [
         cp1[0] + cp2_ext[0][0],
         cp1[1] + cp2_ext[1][0]
     ]
 
-    cp3_ext = mm.multiply(R, [[wp1.direction * d2], [0], [0]])
+    cp3_ext = mm.multiply(R, [[d2], [0], [0]])
     cp3 = [
         cp4[0] + cp3_ext[0][0],
         cp4[1] + cp3_ext[1][0]

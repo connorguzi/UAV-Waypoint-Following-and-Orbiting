@@ -765,10 +765,14 @@ def testing_PathFollowing_Graphical_Bezier(trimControls, trimState, gains, print
     k_path = 0.01
     ks = 0.5
 
+    # controlPoints = [
+    #     [0.0, 0.0],
+    #     [0.0, -2000.0],
+    #     [2000.0, 2000.0],
+    #     [2000.0, 0.0]
+    # ]
     controlPoints = [
         [0.0, 0.0],
-        [0.0, -2000.0],
-        [2000.0, 2000.0],
         [2000.0, 0.0]
     ]
     endHeight = -100

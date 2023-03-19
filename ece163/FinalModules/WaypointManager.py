@@ -114,19 +114,19 @@ class WaypointManager():
     #     position = [[state.pn], [state.pe], [state.pd]]
     #     return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
 
-    # def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
-    #     """
-    #     Author: Connor Guzikowski (cguzikow)
-    #     Date: 03.13.2023
-    #     Function to determine whether UAV is in radius of waypoint or not
-    #     @param: state -> current state of UAV
-    #     @param: waypoint -> position of desired waypoint
-    #     @param: radius -> defined radius around the waypoint
+    def InWaypointRadius(self, state: States.vehicleState, waypoint: WayPoint):
+        """
+        Author: Connor Guzikowski (cguzikow)
+        Date: 03.13.2023
+        Function to determine whether UAV is in radius of waypoint or not
+        @param: state -> current state of UAV
+        @param: waypoint -> position of desired waypoint
+        @param: radius -> defined radius around the waypoint
 
-    #     """
-    #     p_waypoint = [[waypoint.location[0][0]], [waypoint.location[1][0]], [0]]
-    #     position = [[state.pn], [state.pe], [0]]
-    #     return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
+        """
+        p_waypoint = [[waypoint.location[0][0]], [waypoint.location[1][0]], [0]]
+        position = [[state.pn], [state.pe], [0]]
+        return mm.mag(mm.subtract(position, p_waypoint)) <= waypoint.radius
 
     def InWaypointHalfplane(self, state: States.vehicleState, waypointWindow: 'list[WayPoint]'):
         """
@@ -200,7 +200,7 @@ class WaypointManager():
 
             # Check if UAV is inside the current waypoint's halfplane
             waypointWindow = [self.WaypointList[i_prv], self.WaypointList[i], self.WaypointList[i_next]]
-            if(self.InWaypointHalfplane(state=state, waypointWindow=waypointWindow)):
+            if(self.InWaypointRadius(state=state, waypoint=self.CurrentWaypoint)):
                 self.WaypointState = WaypointStates.ORBITING
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
 
