@@ -41,6 +41,7 @@ import ece163.Constants.VehicleSensorConstants as VSC
 
 import ece163.FinalModules.WayPoint as WayPoint
 import ece163.FinalModules.WaypointManager as WaypointManager
+from ece163.FinalModules.BezierCurve import normalizeBezierDirection, controlPtsFromWayPts, unpackBezierPosition
 
 ##### GAINS #####
 gains = Controls.controlGains() # UAV gains object
