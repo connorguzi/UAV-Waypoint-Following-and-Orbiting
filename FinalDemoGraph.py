@@ -83,7 +83,7 @@ waypoint3=WayPoint.WayPoint(
     n=200,
     e=10,
     d=-125,
-    radius=50,
+    radius=75,
     direction=1,
     time=50
 )
@@ -130,7 +130,7 @@ vclc.setVehicleState(vState)
 ##### SIMULATION SETUP ###
 # time step dT
 dT = vclc.getVehicleAerodynamicsModel().getVehicleDynamicsModel().dT
-totalTime = 50 # total simulation time [s]
+totalTime = 500 # total simulation time [s]
 n_steps = int(totalTime / dT) # simulation steps
 t_data = [i*dT for i in range(n_steps)] # time array
 

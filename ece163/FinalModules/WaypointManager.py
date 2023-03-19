@@ -28,7 +28,7 @@ class WaypointStates(enum.Enum):
 
 class WaypointManager():
     def __init__(self, WaypointList=None, k_path = 0.05, k_orbit = 0.05, k_s=0.5, d_min=10, origin = [[0], [0], [0]], dt=None) -> None:
-        self.WaypointState = WaypointStates.PATH_FOLLOWING
+        self.WaypointState = WaypointStates.ORBITING
         self.WaypointList = WaypointList
         if self.WaypointList:
             self.CurrentWaypoint = self.WaypointList[0]
@@ -50,10 +50,13 @@ class WaypointManager():
         self.s = 0
         
         
-        starting_waypoint = WayPoint(origin[0][0], origin[1][0], origin[2][0])
-        control_points = controlPtsFromWayPts(starting_waypoint, self.CurrentWaypoint, 0, self.d_min)
-        self.bezier_curve = bezier.BezierSegment(starting_waypoint.location)
-        self.bezier_derivative = getBezierDerivative(self.bezier_curve)
+        # starting_waypoint = WayPoint(origin[0][0], origin[1][0], origin[2][0])
+        # control_points = controlPtsFromWayPts(starting_waypoint, self.CurrentWaypoint, 0, self.d_min)
+        # # self.bezier_curve = bezier.BezierSegment(starting_waypoint.location)
+        # # self.bezier_derivative = getBezierDerivative(self.bezier_curve)
+
+        # self.bezier_curve = bezier.BezierSegment(control_points=control_points)
+        # self.bezier_derivative = getBezierDerivative(self.bezier_curve)
 
     # def CalcDirectionVector(self, state: States.vehicleState, waypoint: WayPoint):
     #     """
@@ -192,7 +195,7 @@ class WaypointManager():
                 height_command, course_command = Orbiting.getCommandedInputs(state=state, waypoint=self.CurrentWaypoint, k_orbit=self.k_orbit)
 
                 # calculate control points
-                control_points = controlPtsFromWayPts(waypoint1, waypoint2, Orbiting.CalcAngleAlongCircle(state, waypoint1), self.d_min)
+                control_points = controlPtsFromWayPts(waypoint1, waypoint2, Orbiting.CalcAngleAlongCircle(state, waypoint1.location), self.d_min)
                 self.bezier_curve = bezier.BezierSegment(control_points=control_points)
                 self.bezier_derivative = getBezierDerivative(self.bezier_curve)
 
